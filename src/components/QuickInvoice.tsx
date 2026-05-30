@@ -357,10 +357,10 @@ export default function QuickInvoice() {
           style={{ aspectRatio: "auto" }}
         >
           {/* Header */}
-          <div className="flex flex-wrap items-start justify-between gap-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-bold tracking-tight" style={{ color: theme.text }}>INVOICE</h1>
-              <div className="mt-3 space-y-1 text-sm">
+              <h1 className="text-3xl font-bold tracking-tight" style={{ color: theme.text }}>INVOICE</h1>
+              <div className="mt-1.5 space-y-0.5 text-sm">
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Invoice #</span>
                   <Editable value={inv.invoiceNumber} onChange={(v) => update({ invoiceNumber: v })} className="font-medium" />
@@ -368,24 +368,24 @@ export default function QuickInvoice() {
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Issued</span>
                   <input type="date" value={inv.issueDate} onChange={(e) => update({ issueDate: e.target.value })}
-                    className="rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-border focus:border-primary focus:outline-none" />
+                    className="rounded border border-transparent bg-transparent px-1 py-0 hover:border-border focus:border-primary focus:outline-none" />
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Due</span>
                   <input type="date" value={inv.dueDate} onChange={(e) => update({ dueDate: e.target.value })}
-                    className="rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-border focus:border-primary focus:outline-none" />
+                    className="rounded border border-transparent bg-transparent px-1 py-0 hover:border-border focus:border-primary focus:outline-none" />
                 </div>
               </div>
             </div>
             <div className="text-right">
               {inv.logo ? (
                 <label className="block cursor-pointer">
-                  <img src={inv.logo} alt="Logo" className="max-h-20 max-w-[200px] object-contain" />
+                  <img src={inv.logo} alt="Logo" className="max-h-16 max-w-[180px] object-contain" />
                   <input type="file" accept="image/*" className="hidden no-print" onChange={(e) => e.target.files && handleLogo(e.target.files[0])} />
-                  <button onClick={(e) => { e.preventDefault(); update({ logo: null }); }} className="no-print mt-2 text-xs text-muted-foreground hover:text-destructive">Remove logo</button>
+                  <button onClick={(e) => { e.preventDefault(); update({ logo: null }); }} className="no-print mt-1 text-xs text-muted-foreground hover:text-destructive">Remove logo</button>
                 </label>
               ) : (
-                <label className="no-print flex h-20 w-44 cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border text-sm text-muted-foreground hover:border-primary hover:text-primary">
+                <label className="no-print flex h-16 w-40 cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border text-xs text-muted-foreground hover:border-primary hover:text-primary">
                   + Add logo
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files && handleLogo(e.target.files[0])} />
                 </label>
@@ -394,7 +394,7 @@ export default function QuickInvoice() {
           </div>
 
           {/* From / To */}
-          <div className="mt-10 grid gap-8 sm:grid-cols-2">
+          <div className="mt-6 grid gap-6 sm:grid-cols-2">
             <Party label="From" theme={theme}>
               <Editable value={inv.from.name} onChange={(v) => updateFrom({ name: v })} className="block text-base font-semibold" placeholder="Your company" />
               <Editable value={inv.from.address} onChange={(v) => updateFrom({ address: v })} multiline as="div" className="mt-1 block text-sm text-muted-foreground" placeholder="Address" />
