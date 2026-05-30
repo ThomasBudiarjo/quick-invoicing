@@ -160,11 +160,38 @@ export default function QuickInvoice() {
   const updateItem = (id: string, patch: Partial<LineItem>) =>
     setInv((p) => ({ ...p, items: p.items.map((it) => (it.id === id ? { ...it, ...patch } : it)) }));
   const addItem = () =>
-    setInv((p) => ({ ...p, items: [...p.items, { id: uid(), description: "New item", qty: 1, rate: 0 }] }));
+    setInv((p) => ({ ...p, items: [...p.items, { id: uid(), description: "New item", qty: 1, rate: 0, subItems: [] }] }));
   const removeItem = (id: string) =>
     setInv((p) => ({ ...p, items: p.items.filter((it) => it.id !== id) }));
+  const addSubItem = (itemId: string) =>
+    setInv((p) => ({
+      ...p,
+      items: p.items.map((it) =>
+        it.id === itemId
+          ? { ...it, subItems: [...(it.subItems ?? []), { id: uid(), description: "Sub-item", qty: 1, rate: 0 }] }
+          : it,
+      ),
+    }));
+  const updateSubItem = (itemId: string, subId: string, patch: Partial<SubItem>) =>
+    setInv((p) => ({
+      ...p,
+      items: p.items.map((it) =>
+        it.id === itemId
+          ? { ...it, subItems: (it.subItems ?? []).map((s) => (s.id === subId ? { ...s, ...patch } : s)) }
+          : it,
+      ),
+    }));
+  const removeSubItem = (itemId: string, subId: string) =>
+    setInv((p) => ({
+      ...p,
+      items: p.items.map((it) =>
+        it.id === itemId ? { ...it, subItems: (it.subItems ?? []).filter((s) => s.id !== subId) } : it,
+      ),
+    }));
 
-  const subtotal = inv.items.reduce((s, it) => s + it.qty * it.rate, 0);
+  const lineAmount = (it: LineItem) =>
+    it.qty * it.rate + (it.subItems ?? []).reduce((s, x) => s + x.qty * x.rate, 0);
+  const subtotal = inv.items.reduce((s, it) => s + lineAmount(it), 0);
   const taxAmt = subtotal * (inv.taxPercent / 100);
   const discountAmt = inv.discountType === "percent" ? subtotal * (inv.discount / 100) : inv.discount;
   const total = Math.max(0, subtotal + taxAmt - discountAmt);
