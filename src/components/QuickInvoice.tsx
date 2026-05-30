@@ -283,6 +283,19 @@ export default function QuickInvoice() {
               {Object.keys(CURRENCIES).map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </label>
+          <label className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Number</span>
+            <select
+              value={inv.numberFormat}
+              onChange={(e) => update({ numberFormat: e.target.value as NumberFormatKey })}
+              className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+            >
+              <option value="auto">Auto ({NUMBER_FORMATS[CURRENCY_FORMAT_DEFAULT[inv.currency] ?? "us"].label})</option>
+              {(Object.keys(NUMBER_FORMATS) as Array<keyof typeof NUMBER_FORMATS>).map((k) => (
+                <option key={k} value={k}>{NUMBER_FORMATS[k].label}</option>
+              ))}
+            </select>
+          </label>
           <div className="flex items-center gap-1.5">
             {(Object.keys(THEMES) as ThemeKey[]).map((k) => (
               <button
