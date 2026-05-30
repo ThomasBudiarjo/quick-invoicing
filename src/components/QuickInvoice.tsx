@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 
-type SubItem = { id: string; description: string; qty: number; rate: number };
-type LineItem = { id: string; description: string; qty: number; rate: number; subItems?: SubItem[]; includeSubInTotal?: boolean };
+type SubItem = { id: string; description: string; qty: number; rate: number; included?: boolean };
+type LineItem = { id: string; description: string; qty: number; rate: number; subItems?: SubItem[] };
 type DiscountType = "flat" | "percent";
 type ThemeKey = "blue" | "green" | "slate" | "rose" | "amber";
 type PaymentMethodKey = "bank" | "paypal" | "cash" | "other";
@@ -57,7 +57,7 @@ const blankInvoice = (number = "INV-0001"): Invoice => ({
   from: { name: "Your Company", address: "123 Main St\nCity, State 00000", email: "hello@company.com", phone: "+1 (555) 000-0000" },
   to: { name: "Client Name", address: "456 Client Ave\nCity, State 00000", email: "client@example.com" },
   items: [
-    { id: uid(), description: "Service or product description", qty: 1, rate: 100, subItems: [], includeSubInTotal: true },
+    { id: uid(), description: "Service or product description", qty: 1, rate: 100, subItems: [] },
   ],
   taxPercent: 0,
   discount: 0,
@@ -165,7 +165,7 @@ export default function QuickInvoice() {
   const updateItem = (id: string, patch: Partial<LineItem>) =>
     setInv((p) => ({ ...p, items: p.items.map((it) => (it.id === id ? { ...it, ...patch } : it)) }));
   const addItem = () =>
-    setInv((p) => ({ ...p, items: [...p.items, { id: uid(), description: "New item", qty: 1, rate: 0, subItems: [], includeSubInTotal: true }] }));
+    setInv((p) => ({ ...p, items: [...p.items, { id: uid(), description: "New item", qty: 1, rate: 0, subItems: [] }] }));
   const removeItem = (id: string) =>
     setInv((p) => ({ ...p, items: p.items.filter((it) => it.id !== id) }));
   const addSubItem = (itemId: string) =>
@@ -195,7 +195,7 @@ export default function QuickInvoice() {
     }));
 
   const lineAmount = (it: LineItem) =>
-    it.qty * it.rate + ((it.includeSubInTotal ?? true) ? (it.subItems ?? []).reduce((s, x) => s + x.qty * x.rate, 0) : 0);
+    it.qty * it.rate + (it.subItems ?? []).reduce((s, x) => s + (x.included ? 0 : x.qty * x.rate), 0);
   const subtotal = inv.items.reduce((s, it) => s + lineAmount(it), 0);
   const taxAmt = subtotal * (inv.taxPercent / 100);
   const discountAmt = inv.discountType === "percent" ? subtotal * (inv.discount / 100) : inv.discount;
@@ -362,26 +362,13 @@ export default function QuickInvoice() {
                     <tr key={it.id} className="border-b border-border align-top">
                       <td className="px-3 py-3">
                         <Editable value={it.description} onChange={(v) => updateItem(it.id, { description: v })} multiline as="div" placeholder="Description" />
-                        <div className="no-print mt-1 flex flex-wrap items-center gap-3">
-                          <button
-                            onClick={() => addSubItem(it.id)}
-                            className="text-xs font-medium"
-                            style={{ color: theme.accent }}
-                          >
-                            + Add sub-item
-                          </button>
-                          {(it.subItems?.length ?? 0) > 0 && (
-                            <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
-                              <input
-                                type="checkbox"
-                                checked={it.includeSubInTotal ?? true}
-                                onChange={(e) => updateItem(it.id, { includeSubInTotal: e.target.checked })}
-                                className="h-3.5 w-3.5 rounded border-border accent-primary"
-                              />
-                              Include sub-items in total
-                            </label>
-                          )}
-                        </div>
+                        <button
+                          onClick={() => addSubItem(it.id)}
+                          className="no-print mt-1 text-xs font-medium"
+                          style={{ color: theme.accent }}
+                        >
+                          + Add sub-item
+                        </button>
                       </td>
                       <td className="px-3 py-3 text-right">
                         <NumberEditable value={it.qty} onChange={(n) => updateItem(it.id, { qty: n })} />
@@ -399,14 +386,29 @@ export default function QuickInvoice() {
                         <td className="px-3 py-2 pl-8">
                           <span className="mr-2 select-none opacity-60">↳</span>
                           <Editable value={sub.description} onChange={(v) => updateSubItem(it.id, sub.id, { description: v })} multiline as="span" placeholder="Sub-item" />
+                          <label className="no-print ml-3 inline-flex cursor-pointer items-center gap-1 align-middle text-[11px]">
+                            <input
+                              type="checkbox"
+                              checked={sub.included ?? false}
+                              onChange={(e) => updateSubItem(it.id, sub.id, { included: e.target.checked })}
+                              className="h-3 w-3 rounded border-border accent-primary"
+                            />
+                            Included
+                          </label>
                         </td>
                         <td className="px-3 py-2 text-right">
                           <NumberEditable value={sub.qty} onChange={(n) => updateSubItem(it.id, sub.id, { qty: n })} />
                         </td>
                         <td className="px-3 py-2 text-right">
-                          <NumberEditable value={sub.rate} onChange={(n) => updateSubItem(it.id, sub.id, { rate: n })} />
+                          {sub.included ? (
+                            <span className="italic opacity-70">Included</span>
+                          ) : (
+                            <NumberEditable value={sub.rate} onChange={(n) => updateSubItem(it.id, sub.id, { rate: n })} />
+                          )}
                         </td>
-                        <td className="px-3 py-2 text-right">{fmtMoney(sub.qty * sub.rate, inv.currency)}</td>
+                        <td className="px-3 py-2 text-right">
+                          {sub.included ? <span className="italic opacity-70">Included</span> : fmtMoney(sub.qty * sub.rate, inv.currency)}
+                        </td>
                         <td className="no-print px-1 py-2 text-right">
                           <button onClick={() => removeSubItem(it.id, sub.id)} className="rounded p-1 hover:bg-muted hover:text-destructive" aria-label="Remove sub-item">×</button>
                         </td>
