@@ -22,10 +22,27 @@ type Invoice = {
   theme: ThemeKey;
   showPaymentMethod: boolean;
   paymentMethod: string;
+  numberFormat: NumberFormatKey;
 };
+
+type NumberFormatKey = "auto" | "us" | "eu" | "fr" | "ch" | "plain";
 
 const CURRENCIES: Record<string, string> = {
   USD: "$", EUR: "€", GBP: "£", JPY: "¥", INR: "₹", IDR: "Rp", CAD: "C$", AUD: "A$", CHF: "CHF", CNY: "¥", BRL: "R$",
+};
+
+const NUMBER_FORMATS: Record<Exclude<NumberFormatKey, "auto">, { thousand: string; decimal: string; label: string }> = {
+  us:    { thousand: ",", decimal: ".", label: "1,234.56" },
+  eu:    { thousand: ".", decimal: ",", label: "1.234,56" },
+  fr:    { thousand: " ", decimal: ",", label: "1 234,56" },
+  ch:    { thousand: "'", decimal: ".", label: "1'234.56" },
+  plain: { thousand: "",  decimal: ".", label: "1234.56" },
+};
+
+// Per-currency default when format is "auto"
+const CURRENCY_FORMAT_DEFAULT: Record<string, Exclude<NumberFormatKey, "auto">> = {
+  USD: "us", GBP: "us", JPY: "us", INR: "us", CAD: "us", AUD: "us", CNY: "us", CHF: "ch",
+  EUR: "eu", IDR: "eu", BRL: "eu",
 };
 
 const THEMES: Record<ThemeKey, { accent: string; soft: string; text: string }> = {
@@ -67,6 +84,7 @@ const blankInvoice = (number = "INV-0001"): Invoice => ({
   theme: "blue",
   showPaymentMethod: false,
   paymentMethod: "Bank Transfer: Your Company\nBank: ABC Bank\nAccount: 1234567890",
+  numberFormat: "auto",
 });
 
 const STORAGE_KEY = "quickinvoice:v1";
@@ -80,10 +98,19 @@ function loadInvoice(): Invoice {
   } catch { return blankInvoice(); }
 }
 
-function fmtMoney(n: number, currency: string) {
+function resolveFormat(currency: string, fmt: NumberFormatKey) {
+  const key = fmt === "auto" ? (CURRENCY_FORMAT_DEFAULT[currency] ?? "us") : fmt;
+  return NUMBER_FORMATS[key];
+}
+
+function fmtMoney(n: number, currency: string, fmt: NumberFormatKey = "auto") {
   const sym = CURRENCIES[currency] ?? "";
-  const v = (isFinite(n) ? n : 0).toFixed(2);
-  return `${sym}${v}`;
+  const { thousand, decimal } = resolveFormat(currency, fmt);
+  const safe = isFinite(n) ? n : 0;
+  const [intPart, decPart] = Math.abs(safe).toFixed(2).split(".");
+  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousand);
+  const sign = safe < 0 ? "-" : "";
+  return `${sign}${sym}${grouped}${decimal}${decPart}`;
 }
 
 /** Inline editable text field — uncontrolled contentEditable to keep caret stable. */
@@ -256,6 +283,19 @@ export default function QuickInvoice() {
               {Object.keys(CURRENCIES).map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </label>
+          <label className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Number</span>
+            <select
+              value={inv.numberFormat}
+              onChange={(e) => update({ numberFormat: e.target.value as NumberFormatKey })}
+              className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+            >
+              <option value="auto">Auto ({NUMBER_FORMATS[CURRENCY_FORMAT_DEFAULT[inv.currency] ?? "us"].label})</option>
+              {(Object.keys(NUMBER_FORMATS) as Array<keyof typeof NUMBER_FORMATS>).map((k) => (
+                <option key={k} value={k}>{NUMBER_FORMATS[k].label}</option>
+              ))}
+            </select>
+          </label>
           <div className="flex items-center gap-1.5">
             {(Object.keys(THEMES) as ThemeKey[]).map((k) => (
               <button
@@ -376,7 +416,7 @@ export default function QuickInvoice() {
                       <td className="px-3 py-3 text-right">
                         <NumberEditable value={it.rate} onChange={(n) => updateItem(it.id, { rate: n })} />
                       </td>
-                      <td className="px-3 py-3 text-right font-medium">{fmtMoney(lineAmount(it), inv.currency)}</td>
+                      <td className="px-3 py-3 text-right font-medium">{fmtMoney(lineAmount(it), inv.currency, inv.numberFormat)}</td>
                       <td className="no-print px-1 py-3 text-right">
                         <button onClick={() => removeItem(it.id)} className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-destructive" aria-label="Remove">×</button>
                       </td>
@@ -407,7 +447,7 @@ export default function QuickInvoice() {
                           )}
                         </td>
                         <td className="px-3 py-2 text-right">
-                          {sub.included ? <span className="italic opacity-70">Included</span> : fmtMoney(sub.qty * sub.rate, inv.currency)}
+                          {sub.included ? <span className="italic opacity-70">Included</span> : fmtMoney(sub.qty * sub.rate, inv.currency, inv.numberFormat)}
                         </td>
                         <td className="no-print px-1 py-2 text-right">
                           <button onClick={() => removeSubItem(it.id, sub.id)} className="rounded p-1 hover:bg-muted hover:text-destructive" aria-label="Remove sub-item">×</button>
@@ -426,12 +466,12 @@ export default function QuickInvoice() {
           {/* Totals */}
           <div className="mt-8 flex justify-end">
             <div className="w-full max-w-xs space-y-2 text-sm">
-              <Row label="Subtotal">{fmtMoney(subtotal, inv.currency)}</Row>
+              <Row label="Subtotal">{fmtMoney(subtotal, inv.currency, inv.numberFormat)}</Row>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">
                   Tax (<NumberEditable value={inv.taxPercent} onChange={(n) => update({ taxPercent: n })} />%)
                 </span>
-                <span>{fmtMoney(taxAmt, inv.currency)}</span>
+                <span>{fmtMoney(taxAmt, inv.currency, inv.numberFormat)}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">
@@ -445,11 +485,11 @@ export default function QuickInvoice() {
                   </button>{" "}
                   <NumberEditable value={inv.discount} onChange={(n) => update({ discount: n })} />
                 </span>
-                <span>−{fmtMoney(discountAmt, inv.currency)}</span>
+                <span>−{fmtMoney(discountAmt, inv.currency, inv.numberFormat)}</span>
               </div>
               <div className="mt-2 flex items-center justify-between border-t-2 pt-3" style={{ borderColor: theme.accent }}>
                 <span className="text-base font-semibold" style={{ color: theme.text }}>Total</span>
-                <span className="text-2xl font-bold" style={{ color: theme.text }}>{fmtMoney(total, inv.currency)}</span>
+                <span className="text-2xl font-bold" style={{ color: theme.text }}>{fmtMoney(total, inv.currency, inv.numberFormat)}</span>
               </div>
             </div>
           </div>
