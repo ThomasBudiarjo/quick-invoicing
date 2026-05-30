@@ -362,13 +362,26 @@ export default function QuickInvoice() {
                     <tr key={it.id} className="border-b border-border align-top">
                       <td className="px-3 py-3">
                         <Editable value={it.description} onChange={(v) => updateItem(it.id, { description: v })} multiline as="div" placeholder="Description" />
-                        <button
-                          onClick={() => addSubItem(it.id)}
-                          className="no-print mt-1 text-xs font-medium"
-                          style={{ color: theme.accent }}
-                        >
-                          + Add sub-item
-                        </button>
+                        <div className="no-print mt-1 flex flex-wrap items-center gap-3">
+                          <button
+                            onClick={() => addSubItem(it.id)}
+                            className="text-xs font-medium"
+                            style={{ color: theme.accent }}
+                          >
+                            + Add sub-item
+                          </button>
+                          {(it.subItems?.length ?? 0) > 0 && (
+                            <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
+                              <input
+                                type="checkbox"
+                                checked={it.includeSubInTotal ?? true}
+                                onChange={(e) => updateItem(it.id, { includeSubInTotal: e.target.checked })}
+                                className="h-3.5 w-3.5 rounded border-border accent-primary"
+                              />
+                              Include sub-items in total
+                            </label>
+                          )}
+                        </div>
                       </td>
                       <td className="px-3 py-3 text-right">
                         <NumberEditable value={it.qty} onChange={(n) => updateItem(it.id, { qty: n })} />
