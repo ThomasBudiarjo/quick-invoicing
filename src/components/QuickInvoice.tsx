@@ -380,12 +380,12 @@ export default function QuickInvoice() {
             <div className="text-right">
               {inv.logo ? (
                 <label className="block cursor-pointer">
-                  <img src={inv.logo} alt="Logo" className="max-h-20 max-w-[200px] object-contain" />
+                  <img src={inv.logo} alt="Logo" className="max-h-14 max-w-[160px] object-contain" />
                   <input type="file" accept="image/*" className="hidden no-print" onChange={(e) => e.target.files && handleLogo(e.target.files[0])} />
-                  <button onClick={(e) => { e.preventDefault(); update({ logo: null }); }} className="no-print mt-2 text-xs text-muted-foreground hover:text-destructive">Remove logo</button>
+                  <button onClick={(e) => { e.preventDefault(); update({ logo: null }); }} className="no-print mt-1 text-xs text-muted-foreground hover:text-destructive">Remove logo</button>
                 </label>
               ) : (
-                <label className="no-print flex h-20 w-44 cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border text-sm text-muted-foreground hover:border-primary hover:text-primary">
+                <label className="no-print flex h-14 w-36 cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border text-sm text-muted-foreground hover:border-primary hover:text-primary">
                   + Add logo
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files && handleLogo(e.target.files[0])} />
                 </label>
