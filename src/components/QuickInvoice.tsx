@@ -385,7 +385,7 @@ export default function QuickInvoice() {
                         </td>
                       </tr>
                     ))}
-                  </>
+                  </Fragment>
                 ))}
               </tbody>
             </table>
