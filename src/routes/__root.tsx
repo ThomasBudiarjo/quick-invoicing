@@ -24,7 +24,7 @@ function NotFoundComponent() {
         <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 active:opacity-80 active:scale-[0.97]"
           >
             Go home
           </Link>
@@ -56,13 +56,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 active:opacity-80 active:scale-[0.97]"
           >
             Try again
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition hover:bg-accent active:bg-accent active:scale-[0.97]"
           >
             Go home
           </a>
@@ -77,23 +77,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
+      { title: "QuickInvoice — Free WYSIWYG Invoice Creator" },
       { name: "description", content: "QuickInvoice is a free, no-login WYSIWYG invoice creator for instant PDF export or printing." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
+      { property: "og:title", content: "QuickInvoice — Free WYSIWYG Invoice Creator" },
       { property: "og:description", content: "QuickInvoice is a free, no-login WYSIWYG invoice creator for instant PDF export or printing." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
+      { name: "twitter:title", content: "QuickInvoice — Free WYSIWYG Invoice Creator" },
       { name: "twitter:description", content: "QuickInvoice is a free, no-login WYSIWYG invoice creator for instant PDF export or printing." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/74422496-550e-499b-a35a-40f1ceb5cce3/id-preview-4deba8ec--0f9d0001-f1d4-45e3-9d9a-3058d0435b79.lovable.app-1780130478262.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/74422496-550e-499b-a35a-40f1ceb5cce3/id-preview-4deba8ec--0f9d0001-f1d4-45e3-9d9a-3058d0435b79.lovable.app-1780130478262.png" },
+
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      {
+        rel: "icon",
+        href: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23d97706'/><text x='16' y='23' text-anchor='middle' font-size='20' font-weight='bold' fill='white' font-family='system-ui,sans-serif'>Q</text></svg>",
       },
     ],
   }),

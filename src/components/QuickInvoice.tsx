@@ -5,7 +5,6 @@ type SubItem = { id: string; description: string; qty: number; rate: number; inc
 type LineItem = { id: string; description: string; qty: number; rate: number; subItems?: SubItem[] };
 type DiscountType = "flat" | "percent";
 type ThemeKey = "blue" | "green" | "slate" | "rose" | "amber";
-type PaymentMethodKey = "bank" | "paypal" | "cash" | "other";
 
 type Invoice = {
   logo: string | null;
@@ -80,9 +79,9 @@ const blankInvoice = (number = "INV-0001"): Invoice => ({
   taxPercent: 0,
   discount: 0,
   discountType: "flat",
-  notes: "Thank you for your business! Payment due within 30 days.",
+  notes: "Thank you for your business. Payment due within 30 days.",
   currency: "USD",
-  theme: "blue",
+  theme: "amber",
   showPaymentMethod: false,
   paymentMethod: "Bank Transfer: Your Company\nBank: ABC Bank\nAccount: 1234567890",
   numberFormat: "auto",
@@ -142,6 +141,7 @@ function Editable({
       ref={ref as any}
       contentEditable
       suppressContentEditableWarning
+      tabIndex={0}
       data-placeholder={placeholder}
       className={`editable ${multiline ? "whitespace-pre-wrap" : ""} ${className}`}
       onBlur={(e: any) => onChange(e.currentTarget.innerText)}
@@ -175,6 +175,7 @@ function NumberEditable({
       ref={ref}
       contentEditable
       suppressContentEditableWarning
+      tabIndex={0}
       inputMode="decimal"
       className={`editable ${className}`}
       onFocus={() => {
@@ -202,12 +203,25 @@ export default function QuickInvoice() {
   const [inv, setInv] = useState<Invoice>(() => blankInvoice());
   const [hydrated, setHydrated] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settingsClosing, setSettingsClosing] = useState(false);
   const paperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { setInv(loadInvoice()); setHydrated(true); }, []);
   useEffect(() => {
     if (hydrated) localStorage.setItem(STORAGE_KEY, JSON.stringify(inv));
   }, [inv, hydrated]);
+
+  useEffect(() => {
+    if (!settingsOpen) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") closeSettings(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [settingsOpen]);
+
+  const closeSettings = () => {
+    setSettingsClosing(true);
+    setTimeout(() => { setSettingsOpen(false); setSettingsClosing(false); }, 140);
+  };
 
   const update = (patch: Partial<Invoice>) => setInv((p) => ({ ...p, ...patch }));
   const updateFrom = (patch: Partial<Invoice["from"]>) =>
@@ -289,20 +303,20 @@ export default function QuickInvoice() {
     <div className="min-h-screen pb-16">
       {/* Toolbar */}
       <div className="no-print sticky top-0 z-10 border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-2.5">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-3 gap-y-1.5 px-4 py-2.5">
           {/* Brand */}
           <div className="flex items-center gap-2 font-semibold">
             <div className="grid h-7 w-7 place-items-center rounded-md text-sm text-primary-foreground" style={{ background: theme.accent }}>Q</div>
             <span className="text-sm tracking-tight">QuickInvoice</span>
           </div>
 
-          <div className="flex-1" />
+          <div className="hidden sm:block flex-1" />
 
           {/* Settings popover */}
           <div className="relative">
             <button
-              onClick={() => setSettingsOpen((v) => !v)}
-              className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-background px-2.5 text-sm text-foreground hover:bg-muted"
+              onClick={() => { if (settingsOpen) { closeSettings(); } else { setSettingsOpen(true); } } }
+              className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-background px-2.5 text-sm text-foreground hover:bg-muted active:bg-accent active:scale-[0.98] transition"
               aria-haspopup="true"
               aria-expanded={settingsOpen}
             >
@@ -311,8 +325,8 @@ export default function QuickInvoice() {
             </button>
             {settingsOpen && (
               <>
-                <div className="fixed inset-0 z-20" onClick={() => setSettingsOpen(false)} />
-                <div className="absolute right-0 z-30 mt-1.5 w-72 rounded-lg border border-border bg-card p-3 shadow-lg">
+                <div className="fixed inset-0 z-20" onClick={closeSettings} />
+                <div className={`absolute right-0 z-30 mt-1.5 w-[calc(100vw-2rem)] max-w-72 rounded-lg border border-border bg-card p-3 shadow-lg ${settingsClosing ? "popover-exit" : "popover-enter"}`}>
                   <div className="space-y-3">
                     <div>
                       <label className="mb-1 block text-xs font-medium text-muted-foreground">Currency</label>
@@ -345,9 +359,11 @@ export default function QuickInvoice() {
                             key={k}
                             onClick={() => update({ theme: k })}
                             aria-label={`Theme ${k}`}
-                            className={`h-6 w-6 rounded-full border-2 transition ${inv.theme === k ? "border-foreground scale-110" : "border-transparent"}`}
-                            style={{ background: THEMES[k].accent }}
-                          />
+                            aria-pressed={inv.theme === k}
+                            className={`inline-flex h-8 w-8 items-center justify-center rounded-full border-2 transition active:scale-95 ${inv.theme === k ? "border-foreground scale-110" : "border-transparent hover:border-foreground/30"}`}
+                          >
+                            <span className="h-5 w-5 rounded-full" style={{ background: THEMES[k].accent }} />
+                          </button>
                         ))}
                       </div>
                     </div>
@@ -367,7 +383,7 @@ export default function QuickInvoice() {
           </div>
 
           {/* Divider */}
-          <div className="h-6 w-px bg-border" />
+          <div className="hidden sm:block h-6 w-px bg-border" />
 
           {/* Actions */}
           <div className="flex items-center gap-1.5">
@@ -399,12 +415,12 @@ export default function QuickInvoice() {
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Issued</span>
                   <input type="date" value={inv.issueDate} onChange={(e) => update({ issueDate: e.target.value })}
-                    className="rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-border focus:border-primary focus:outline-none" />
+                    className="h-8 min-w-[130px] rounded border border-transparent bg-transparent px-1.5 py-1 text-sm hover:border-border focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-ring" />
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Due</span>
                   <input type="date" value={inv.dueDate} onChange={(e) => update({ dueDate: e.target.value })}
-                    className="rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-border focus:border-primary focus:outline-none" />
+                    className="h-8 min-w-[130px] rounded border border-transparent bg-transparent px-1.5 py-1 text-sm hover:border-border focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-ring" />
                 </div>
               </div>
             </div>
@@ -413,7 +429,7 @@ export default function QuickInvoice() {
                 <label className="block cursor-pointer">
                   <img src={inv.logo} alt="Logo" className="max-h-14 max-w-[160px] object-contain" />
                   <input type="file" accept="image/*" className="hidden no-print" onChange={(e) => e.target.files && handleLogo(e.target.files[0])} />
-                  <button onClick={(e) => { e.preventDefault(); update({ logo: null }); }} className="no-print mt-1 text-xs text-muted-foreground hover:text-destructive">Remove logo</button>
+                  <button onClick={(e) => { e.preventDefault(); update({ logo: null }); }} className="no-print mt-1 text-xs text-muted-foreground transition hover:text-destructive active:scale-95">Remove logo</button>
                 </label>
               ) : (
                 <label className="no-print flex h-14 w-36 cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border text-sm text-muted-foreground hover:border-primary hover:text-primary">
@@ -452,68 +468,76 @@ export default function QuickInvoice() {
                 </tr>
               </thead>
               <tbody>
-                {inv.items.map((it) => (
-                  <Fragment key={it.id}>
-                    <tr key={it.id} className="border-b border-border align-top">
-                      <td className="px-2 py-1.5">
-                        <Editable value={it.description} onChange={(v) => updateItem(it.id, { description: v })} multiline as="div" placeholder="Description" />
-                        <button
-                          onClick={() => addSubItem(it.id)}
-                          className="no-print text-xs font-medium"
-                          style={{ color: theme.accent }}
-                        >
-                          + Add sub-item
-                        </button>
-                      </td>
-                      <td className="px-2 py-1.5 text-right">
-                        <NumberEditable value={it.qty} onChange={(n) => updateItem(it.id, { qty: n })} />
-                      </td>
-                      <td className="px-2 py-1.5 text-right">
-                        <NumberEditable value={it.rate} onChange={(n) => updateItem(it.id, { rate: n })} currency={inv.currency} numberFormat={inv.numberFormat} />
-                      </td>
-                      <td className="px-2 py-1.5 text-right font-medium">{fmtMoney(lineAmount(it), inv.currency, inv.numberFormat)}</td>
-                      <td className="no-print px-1 py-1.5 text-right">
-                        <button onClick={() => removeItem(it.id)} className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-destructive" aria-label="Remove">×</button>
-                      </td>
-                    </tr>
-                    {(it.subItems ?? []).map((sub) => (
-                      <tr key={sub.id} className="border-b border-border/50 align-top text-muted-foreground">
-                        <td className="px-2 py-1 pl-6">
-                          <span className="mr-1.5 select-none opacity-60">↳</span>
-                          <Editable value={sub.description} onChange={(v) => updateSubItem(it.id, sub.id, { description: v })} multiline as="span" placeholder="Sub-item" />
-                          <label className="no-print ml-2 inline-flex cursor-pointer items-center gap-1 align-middle text-[11px]">
-                            <input
-                              type="checkbox"
-                              checked={sub.included ?? false}
-                              onChange={(e) => updateSubItem(it.id, sub.id, { included: e.target.checked })}
-                              className="h-3 w-3 rounded border-border accent-primary"
-                            />
-                            Included
-                          </label>
+                {inv.items.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-2 py-8 text-center text-sm text-muted-foreground">
+                      No line items yet. <button onClick={addItem} className="font-medium underline transition hover:text-foreground active:scale-95" style={{ color: theme.accent }}>Add your first item</button> to get started.
+                    </td>
+                  </tr>
+                ) : (
+                  inv.items.map((it) => (
+                    <Fragment key={it.id}>
+                      <tr className="border-b border-border align-top">
+                        <td className="px-2 py-1.5">
+                          <Editable value={it.description} onChange={(v) => updateItem(it.id, { description: v })} multiline as="div" placeholder="Description" className="max-w-[280px] overflow-hidden text-ellipsis" />
+                          <button
+                            onClick={() => addSubItem(it.id)}
+                            className="no-print text-xs font-medium transition active:scale-95"
+                            style={{ color: theme.accent }}
+                          >
+                            + Add sub-item
+                          </button>
                         </td>
-                        <td className="px-2 py-1 text-right">
-                          <NumberEditable value={sub.qty} onChange={(n) => updateSubItem(it.id, sub.id, { qty: n })} />
+                        <td className="px-2 py-1.5 text-right">
+                          <NumberEditable value={it.qty} onChange={(n) => updateItem(it.id, { qty: n })} />
                         </td>
-                        <td className="px-2 py-1 text-right">
-                          {sub.included ? (
-                            <span className="italic opacity-70">Included</span>
-                          ) : (
-                          <NumberEditable value={sub.rate} onChange={(n) => updateSubItem(it.id, sub.id, { rate: n })} currency={inv.currency} numberFormat={inv.numberFormat} />
-                          )}
+                        <td className="px-2 py-1.5 text-right">
+                          <NumberEditable value={it.rate} onChange={(n) => updateItem(it.id, { rate: n })} currency={inv.currency} numberFormat={inv.numberFormat} />
                         </td>
-                        <td className="px-2 py-1 text-right">
-                          {sub.included ? <span className="italic opacity-70">Included</span> : fmtMoney(sub.qty * sub.rate, inv.currency, inv.numberFormat)}
-                        </td>
-                        <td className="no-print px-1 py-1 text-right">
-                          <button onClick={() => removeSubItem(it.id, sub.id)} className="rounded p-1 hover:bg-muted hover:text-destructive" aria-label="Remove sub-item">×</button>
+                        <td className="px-2 py-1.5 text-right font-medium">{fmtMoney(lineAmount(it), inv.currency, inv.numberFormat)}</td>
+                        <td className="no-print px-1 py-1.5 text-right">
+                          <button onClick={() => removeItem(it.id)} className="inline-flex h-8 w-8 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-destructive focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring" aria-label="Remove line item">×</button>
                         </td>
                       </tr>
-                    ))}
-                  </Fragment>
-                ))}
+                      {(it.subItems ?? []).map((sub) => (
+                        <tr key={sub.id} className="border-b border-border/50 align-top text-muted-foreground">
+                          <td className="px-2 py-1 pl-6">
+                            <span className="mr-1.5 select-none opacity-60">↳</span>
+                            <Editable value={sub.description} onChange={(v) => updateSubItem(it.id, sub.id, { description: v })} multiline as="span" placeholder="Sub-item" className="max-w-[240px] overflow-hidden text-ellipsis" />
+                            <label className="no-print ml-2 inline-flex cursor-pointer items-center gap-1 align-middle text-[11px]">
+                              <input
+                                type="checkbox"
+                                checked={sub.included ?? false}
+                                onChange={(e) => updateSubItem(it.id, sub.id, { included: e.target.checked })}
+                                className="h-3 w-3 rounded border-border accent-primary"
+                              />
+                              Included
+                            </label>
+                          </td>
+                          <td className="px-2 py-1 text-right">
+                            <NumberEditable value={sub.qty} onChange={(n) => updateSubItem(it.id, sub.id, { qty: n })} />
+                          </td>
+                          <td className="px-2 py-1 text-right">
+                            {sub.included ? (
+                              <span className="italic opacity-70">Included</span>
+                            ) : (
+                            <NumberEditable value={sub.rate} onChange={(n) => updateSubItem(it.id, sub.id, { rate: n })} currency={inv.currency} numberFormat={inv.numberFormat} />
+                            )}
+                          </td>
+                          <td className="px-2 py-1 text-right">
+                            {sub.included ? <span className="italic opacity-70">Included</span> : fmtMoney(sub.qty * sub.rate, inv.currency, inv.numberFormat)}
+                          </td>
+                          <td className="no-print px-1 py-1 text-right">
+                            <button onClick={() => removeSubItem(it.id, sub.id)} className="inline-flex h-8 w-8 items-center justify-center rounded hover:bg-muted hover:text-destructive focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring" aria-label="Remove sub-item">×</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </Fragment>
+                  ))
+                )}
               </tbody>
             </table>
-            <button onClick={addItem} className="no-print mt-1 text-sm font-medium" style={{ color: theme.accent }}>
+            <button onClick={addItem} className="no-print mt-1 inline-block text-sm font-medium transition active:scale-95" style={{ color: theme.accent }}>
               + Add line
             </button>
           </div>
@@ -533,7 +557,7 @@ export default function QuickInvoice() {
                   Discount
                   <button
                     onClick={() => update({ discountType: inv.discountType === "flat" ? "percent" : "flat" })}
-                    className="no-print ml-1 rounded border border-border px-1 text-xs hover:bg-muted"
+                    className="no-print ml-1 rounded border border-border px-1 text-xs transition hover:bg-muted active:bg-accent active:scale-95"
                     title="Toggle flat / percent"
                   >
                     {inv.discountType === "flat" ? CURRENCIES[inv.currency] : "%"}
@@ -550,12 +574,12 @@ export default function QuickInvoice() {
           </div>
 
           {/* Payment method */}
-          {inv.showPaymentMethod && (
-            <div className="mt-5">
+          <div className={`payment-expand ${inv.showPaymentMethod ? "open mt-5" : ""}`}>
+            <div className="min-h-0">
               <div className="mb-1 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>Payment Method</div>
               <Editable value={inv.paymentMethod} onChange={(v) => update({ paymentMethod: v })} multiline as="div" className="block text-sm text-muted-foreground" placeholder="Bank details, PayPal link, etc." />
             </div>
-          )}
+          </div>
 
           {/* Notes */}
           <div className="mt-8 border-t border-border pt-3">
@@ -572,10 +596,10 @@ function ToolbarBtn({ children, onClick, primary }: { children: ReactNode; onCli
   return (
     <button
       onClick={onClick}
-      className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
+      className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition active:scale-[0.97] ${
         primary
-          ? "bg-primary text-primary-foreground hover:opacity-90"
-          : "border border-border bg-background hover:bg-muted"
+          ? "bg-primary text-primary-foreground hover:opacity-90 active:opacity-80"
+          : "border border-border bg-background hover:bg-muted active:bg-accent"
       }`}
     >
       {children}
