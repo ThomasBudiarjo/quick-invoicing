@@ -270,20 +270,16 @@ export default function QuickInvoice() {
 
   const print = () => window.print();
 
-  const downloadPDF = async () => {
-    const el = paperRef.current; if (!el) return;
-    el.classList.add("exporting");
+  const downloadPDF = () => {
+    // Use the browser's native print-to-PDF. In the print dialog choose
+    // "Save as PDF" as the destination. This avoids html2canvas crashing
+    // on modern CSS color functions (oklch) which would freeze the app.
+    const prevTitle = document.title;
+    document.title = `${inv.invoiceNumber || "invoice"}`;
     try {
-      const html2pdf = (await import("html2pdf.js")).default;
-      await html2pdf().set({
-        margin: 0.4,
-        filename: `${inv.invoiceNumber || "invoice"}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
-        jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
-      }).from(el).save();
+      window.print();
     } finally {
-      el.classList.remove("exporting");
+      setTimeout(() => { document.title = prevTitle; }, 1000);
     }
   };
 
