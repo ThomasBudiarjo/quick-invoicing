@@ -165,7 +165,7 @@ export default function QuickInvoice() {
   const updateItem = (id: string, patch: Partial<LineItem>) =>
     setInv((p) => ({ ...p, items: p.items.map((it) => (it.id === id ? { ...it, ...patch } : it)) }));
   const addItem = () =>
-    setInv((p) => ({ ...p, items: [...p.items, { id: uid(), description: "New item", qty: 1, rate: 0, subItems: [], includeSubInTotal: true }] }));
+    setInv((p) => ({ ...p, items: [...p.items, { id: uid(), description: "New item", qty: 1, rate: 0, subItems: [] }] }));
   const removeItem = (id: string) =>
     setInv((p) => ({ ...p, items: p.items.filter((it) => it.id !== id) }));
   const addSubItem = (itemId: string) =>
