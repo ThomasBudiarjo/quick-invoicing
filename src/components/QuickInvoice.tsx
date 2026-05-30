@@ -201,6 +201,7 @@ function NumberEditable({
 export default function QuickInvoice() {
   const [inv, setInv] = useState<Invoice>(() => blankInvoice());
   const [hydrated, setHydrated] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const paperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { setInv(loadInvoice()); setHydrated(true); }, []);
