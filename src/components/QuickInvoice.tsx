@@ -344,21 +344,48 @@ export default function QuickInvoice() {
               </thead>
               <tbody>
                 {inv.items.map((it) => (
-                  <tr key={it.id} className="border-b border-border align-top">
-                    <td className="px-3 py-3">
-                      <Editable value={it.description} onChange={(v) => updateItem(it.id, { description: v })} multiline as="div" placeholder="Description" />
-                    </td>
-                    <td className="px-3 py-3 text-right">
-                      <NumberEditable value={it.qty} onChange={(n) => updateItem(it.id, { qty: n })} />
-                    </td>
-                    <td className="px-3 py-3 text-right">
-                      <NumberEditable value={it.rate} onChange={(n) => updateItem(it.id, { rate: n })} />
-                    </td>
-                    <td className="px-3 py-3 text-right font-medium">{fmtMoney(it.qty * it.rate, inv.currency)}</td>
-                    <td className="no-print px-1 py-3 text-right">
-                      <button onClick={() => removeItem(it.id)} className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-destructive" aria-label="Remove">×</button>
-                    </td>
-                  </tr>
+                  <>
+                    <tr key={it.id} className="border-b border-border align-top">
+                      <td className="px-3 py-3">
+                        <Editable value={it.description} onChange={(v) => updateItem(it.id, { description: v })} multiline as="div" placeholder="Description" />
+                        <button
+                          onClick={() => addSubItem(it.id)}
+                          className="no-print mt-1 text-xs font-medium"
+                          style={{ color: theme.accent }}
+                        >
+                          + Add sub-item
+                        </button>
+                      </td>
+                      <td className="px-3 py-3 text-right">
+                        <NumberEditable value={it.qty} onChange={(n) => updateItem(it.id, { qty: n })} />
+                      </td>
+                      <td className="px-3 py-3 text-right">
+                        <NumberEditable value={it.rate} onChange={(n) => updateItem(it.id, { rate: n })} />
+                      </td>
+                      <td className="px-3 py-3 text-right font-medium">{fmtMoney(lineAmount(it), inv.currency)}</td>
+                      <td className="no-print px-1 py-3 text-right">
+                        <button onClick={() => removeItem(it.id)} className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-destructive" aria-label="Remove">×</button>
+                      </td>
+                    </tr>
+                    {(it.subItems ?? []).map((sub) => (
+                      <tr key={sub.id} className="border-b border-border/50 align-top text-muted-foreground">
+                        <td className="px-3 py-2 pl-8">
+                          <span className="mr-2 select-none opacity-60">↳</span>
+                          <Editable value={sub.description} onChange={(v) => updateSubItem(it.id, sub.id, { description: v })} multiline as="span" placeholder="Sub-item" />
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          <NumberEditable value={sub.qty} onChange={(n) => updateSubItem(it.id, sub.id, { qty: n })} />
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          <NumberEditable value={sub.rate} onChange={(n) => updateSubItem(it.id, sub.id, { rate: n })} />
+                        </td>
+                        <td className="px-3 py-2 text-right">{fmtMoney(sub.qty * sub.rate, inv.currency)}</td>
+                        <td className="no-print px-1 py-2 text-right">
+                          <button onClick={() => removeSubItem(it.id, sub.id)} className="rounded p-1 hover:bg-muted hover:text-destructive" aria-label="Remove sub-item">×</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </>
                 ))}
               </tbody>
             </table>
