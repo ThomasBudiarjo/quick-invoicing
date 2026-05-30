@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
+import { Settings, Plus, Copy, Printer, Download } from "lucide-react";
 
 type SubItem = { id: string; description: string; qty: number; rate: number; included?: boolean };
 type LineItem = { id: string; description: string; qty: number; rate: number; subItems?: SubItem[] };
