@@ -350,17 +350,17 @@ export default function QuickInvoice() {
       </div>
 
       {/* Invoice paper */}
-      <div className="mx-auto mt-8 max-w-[850px] px-4">
+      <div className="mx-auto mt-4 max-w-[850px] px-4">
         <div
           ref={paperRef}
-          className="invoice-paper mx-auto rounded-lg bg-card p-10 shadow-[0_4px_24px_-8px_rgba(15,23,42,0.15)] sm:p-14"
+          className="invoice-paper mx-auto rounded-lg bg-card p-6 shadow-[0_4px_24px_-8px_rgba(15,23,42,0.15)] sm:p-8"
           style={{ aspectRatio: "auto" }}
         >
           {/* Header */}
-          <div className="flex flex-wrap items-start justify-between gap-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-bold tracking-tight" style={{ color: theme.text }}>INVOICE</h1>
-              <div className="mt-3 space-y-1 text-sm">
+              <h1 className="text-3xl font-bold tracking-tight" style={{ color: theme.text }}>INVOICE</h1>
+              <div className="mt-2 space-y-0.5 text-sm">
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Invoice #</span>
                   <Editable value={inv.invoiceNumber} onChange={(v) => update({ invoiceNumber: v })} className="font-medium" />
@@ -380,12 +380,12 @@ export default function QuickInvoice() {
             <div className="text-right">
               {inv.logo ? (
                 <label className="block cursor-pointer">
-                  <img src={inv.logo} alt="Logo" className="max-h-20 max-w-[200px] object-contain" />
+                  <img src={inv.logo} alt="Logo" className="max-h-14 max-w-[160px] object-contain" />
                   <input type="file" accept="image/*" className="hidden no-print" onChange={(e) => e.target.files && handleLogo(e.target.files[0])} />
-                  <button onClick={(e) => { e.preventDefault(); update({ logo: null }); }} className="no-print mt-2 text-xs text-muted-foreground hover:text-destructive">Remove logo</button>
+                  <button onClick={(e) => { e.preventDefault(); update({ logo: null }); }} className="no-print mt-1 text-xs text-muted-foreground hover:text-destructive">Remove logo</button>
                 </label>
               ) : (
-                <label className="no-print flex h-20 w-44 cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border text-sm text-muted-foreground hover:border-primary hover:text-primary">
+                <label className="no-print flex h-14 w-36 cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border text-sm text-muted-foreground hover:border-primary hover:text-primary">
                   + Add logo
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files && handleLogo(e.target.files[0])} />
                 </label>
@@ -394,29 +394,29 @@ export default function QuickInvoice() {
           </div>
 
           {/* From / To */}
-          <div className="mt-10 grid gap-8 sm:grid-cols-2">
+          <div className="mt-6 grid gap-6 sm:grid-cols-2">
             <Party label="From" theme={theme}>
               <Editable value={inv.from.name} onChange={(v) => updateFrom({ name: v })} className="block text-base font-semibold" placeholder="Your company" />
-              <Editable value={inv.from.address} onChange={(v) => updateFrom({ address: v })} multiline as="div" className="mt-1 block text-sm text-muted-foreground" placeholder="Address" />
-              <Editable value={inv.from.email} onChange={(v) => updateFrom({ email: v })} className="mt-1 block text-sm" placeholder="Email" />
+              <Editable value={inv.from.address} onChange={(v) => updateFrom({ address: v })} multiline as="div" className="mt-0.5 block text-sm text-muted-foreground" placeholder="Address" />
+              <Editable value={inv.from.email} onChange={(v) => updateFrom({ email: v })} className="block text-sm" placeholder="Email" />
               <Editable value={inv.from.phone} onChange={(v) => updateFrom({ phone: v })} className="block text-sm" placeholder="Phone" />
             </Party>
             <Party label="Bill To" theme={theme}>
               <Editable value={inv.to.name} onChange={(v) => updateTo({ name: v })} className="block text-base font-semibold" placeholder="Client name" />
-              <Editable value={inv.to.address} onChange={(v) => updateTo({ address: v })} multiline as="div" className="mt-1 block text-sm text-muted-foreground" placeholder="Address" />
-              <Editable value={inv.to.email} onChange={(v) => updateTo({ email: v })} className="mt-1 block text-sm" placeholder="Email" />
+              <Editable value={inv.to.address} onChange={(v) => updateTo({ address: v })} multiline as="div" className="mt-0.5 block text-sm text-muted-foreground" placeholder="Address" />
+              <Editable value={inv.to.email} onChange={(v) => updateTo({ email: v })} className="block text-sm" placeholder="Email" />
             </Party>
           </div>
 
           {/* Line items */}
-          <div className="mt-10">
+          <div className="mt-6">
             <table className="w-full text-sm">
               <thead>
                 <tr style={{ background: theme.soft, color: theme.text }}>
-                  <th className="px-3 py-2 text-left font-medium">Description</th>
-                  <th className="w-20 px-3 py-2 text-right font-medium">Qty</th>
-                  <th className="w-28 px-3 py-2 text-right font-medium">Rate</th>
-                  <th className="w-32 px-3 py-2 text-right font-medium">Amount</th>
+                  <th className="px-2 py-1.5 text-left text-xs font-medium">Description</th>
+                  <th className="w-20 px-2 py-1.5 text-right text-xs font-medium">Qty</th>
+                  <th className="w-28 px-2 py-1.5 text-right text-xs font-medium">Rate</th>
+                  <th className="w-32 px-2 py-1.5 text-right text-xs font-medium">Amount</th>
                   <th className="no-print w-8" />
                 </tr>
               </thead>
@@ -424,33 +424,33 @@ export default function QuickInvoice() {
                 {inv.items.map((it) => (
                   <Fragment key={it.id}>
                     <tr key={it.id} className="border-b border-border align-top">
-                      <td className="px-3 py-3">
+                      <td className="px-2 py-1.5">
                         <Editable value={it.description} onChange={(v) => updateItem(it.id, { description: v })} multiline as="div" placeholder="Description" />
                         <button
                           onClick={() => addSubItem(it.id)}
-                          className="no-print mt-1 text-xs font-medium"
+                          className="no-print text-xs font-medium"
                           style={{ color: theme.accent }}
                         >
                           + Add sub-item
                         </button>
                       </td>
-                      <td className="px-3 py-3 text-right">
+                      <td className="px-2 py-1.5 text-right">
                         <NumberEditable value={it.qty} onChange={(n) => updateItem(it.id, { qty: n })} />
                       </td>
-                      <td className="px-3 py-3 text-right">
+                      <td className="px-2 py-1.5 text-right">
                         <NumberEditable value={it.rate} onChange={(n) => updateItem(it.id, { rate: n })} currency={inv.currency} numberFormat={inv.numberFormat} />
                       </td>
-                      <td className="px-3 py-3 text-right font-medium">{fmtMoney(lineAmount(it), inv.currency, inv.numberFormat)}</td>
-                      <td className="no-print px-1 py-3 text-right">
+                      <td className="px-2 py-1.5 text-right font-medium">{fmtMoney(lineAmount(it), inv.currency, inv.numberFormat)}</td>
+                      <td className="no-print px-1 py-1.5 text-right">
                         <button onClick={() => removeItem(it.id)} className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-destructive" aria-label="Remove">×</button>
                       </td>
                     </tr>
                     {(it.subItems ?? []).map((sub) => (
                       <tr key={sub.id} className="border-b border-border/50 align-top text-muted-foreground">
-                        <td className="px-3 py-2 pl-8">
-                          <span className="mr-2 select-none opacity-60">↳</span>
+                        <td className="px-2 py-1 pl-6">
+                          <span className="mr-1.5 select-none opacity-60">↳</span>
                           <Editable value={sub.description} onChange={(v) => updateSubItem(it.id, sub.id, { description: v })} multiline as="span" placeholder="Sub-item" />
-                          <label className="no-print ml-3 inline-flex cursor-pointer items-center gap-1 align-middle text-[11px]">
+                          <label className="no-print ml-2 inline-flex cursor-pointer items-center gap-1 align-middle text-[11px]">
                             <input
                               type="checkbox"
                               checked={sub.included ?? false}
@@ -460,20 +460,20 @@ export default function QuickInvoice() {
                             Included
                           </label>
                         </td>
-                        <td className="px-3 py-2 text-right">
+                        <td className="px-2 py-1 text-right">
                           <NumberEditable value={sub.qty} onChange={(n) => updateSubItem(it.id, sub.id, { qty: n })} />
                         </td>
-                        <td className="px-3 py-2 text-right">
+                        <td className="px-2 py-1 text-right">
                           {sub.included ? (
                             <span className="italic opacity-70">Included</span>
                           ) : (
                           <NumberEditable value={sub.rate} onChange={(n) => updateSubItem(it.id, sub.id, { rate: n })} currency={inv.currency} numberFormat={inv.numberFormat} />
                           )}
                         </td>
-                        <td className="px-3 py-2 text-right">
+                        <td className="px-2 py-1 text-right">
                           {sub.included ? <span className="italic opacity-70">Included</span> : fmtMoney(sub.qty * sub.rate, inv.currency, inv.numberFormat)}
                         </td>
-                        <td className="no-print px-1 py-2 text-right">
+                        <td className="no-print px-1 py-1 text-right">
                           <button onClick={() => removeSubItem(it.id, sub.id)} className="rounded p-1 hover:bg-muted hover:text-destructive" aria-label="Remove sub-item">×</button>
                         </td>
                       </tr>
@@ -482,14 +482,14 @@ export default function QuickInvoice() {
                 ))}
               </tbody>
             </table>
-            <button onClick={addItem} className="no-print mt-3 text-sm font-medium" style={{ color: theme.accent }}>
+            <button onClick={addItem} className="no-print mt-1 text-sm font-medium" style={{ color: theme.accent }}>
               + Add line
             </button>
           </div>
 
           {/* Totals */}
-          <div className="mt-8 flex justify-end">
-            <div className="w-full max-w-xs space-y-2 text-sm">
+          <div className="mt-5 flex justify-end">
+            <div className="w-full max-w-xs space-y-1 text-sm">
               <Row label="Subtotal">{fmtMoney(subtotal, inv.currency, inv.numberFormat)}</Row>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">
@@ -511,24 +511,24 @@ export default function QuickInvoice() {
                 </span>
                 <span>−{fmtMoney(discountAmt, inv.currency, inv.numberFormat)}</span>
               </div>
-              <div className="mt-2 flex items-center justify-between border-t-2 pt-3" style={{ borderColor: theme.accent }}>
+              <div className="mt-1 flex items-center justify-between border-t-2 pt-2" style={{ borderColor: theme.accent }}>
                 <span className="text-base font-semibold" style={{ color: theme.text }}>Total</span>
-                <span className="text-2xl font-bold" style={{ color: theme.text }}>{fmtMoney(total, inv.currency, inv.numberFormat)}</span>
+                <span className="text-xl font-bold" style={{ color: theme.text }}>{fmtMoney(total, inv.currency, inv.numberFormat)}</span>
               </div>
             </div>
           </div>
 
           {/* Payment method */}
           {inv.showPaymentMethod && (
-            <div className="mt-8">
-              <div className="mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>Payment Method</div>
+            <div className="mt-5">
+              <div className="mb-1 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>Payment Method</div>
               <Editable value={inv.paymentMethod} onChange={(v) => update({ paymentMethod: v })} multiline as="div" className="block text-sm text-muted-foreground" placeholder="Bank details, PayPal link, etc." />
             </div>
           )}
 
           {/* Notes */}
-          <div className="mt-12 border-t border-border pt-6">
-            <div className="mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>Notes & Terms</div>
+          <div className="mt-8 border-t border-border pt-3">
+            <div className="mb-1 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>Notes & Terms</div>
             <Editable value={inv.notes} onChange={(v) => update({ notes: v })} multiline as="div" className="block text-sm text-muted-foreground" placeholder="Payment terms, thank-you note, etc." />
           </div>
         </div>
@@ -555,7 +555,7 @@ function ToolbarBtn({ children, onClick, primary }: { children: ReactNode; onCli
 function Party({ label, theme, children }: { label: string; theme: { accent: string }; children: ReactNode }) {
   return (
     <div>
-      <div className="mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>{label}</div>
+      <div className="mb-1 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>{label}</div>
       {children}
     </div>
   );
