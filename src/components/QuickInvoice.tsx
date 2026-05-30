@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 
-type SubItem = { id: string; description: string; qty: number; rate: number };
-type LineItem = { id: string; description: string; qty: number; rate: number; subItems?: SubItem[]; includeSubInTotal?: boolean };
+type SubItem = { id: string; description: string; qty: number; rate: number; included?: boolean };
+type LineItem = { id: string; description: string; qty: number; rate: number; subItems?: SubItem[] };
 type DiscountType = "flat" | "percent";
 type ThemeKey = "blue" | "green" | "slate" | "rose" | "amber";
 type PaymentMethodKey = "bank" | "paypal" | "cash" | "other";
