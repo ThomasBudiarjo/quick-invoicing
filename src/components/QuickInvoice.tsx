@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-type LineItem = { id: string; description: string; qty: number; rate: number };
+type SubItem = { id: string; description: string; qty: number; rate: number };
+type LineItem = { id: string; description: string; qty: number; rate: number; subItems?: SubItem[] };
 type DiscountType = "flat" | "percent";
 type ThemeKey = "blue" | "green" | "slate" | "rose" | "amber";
 
