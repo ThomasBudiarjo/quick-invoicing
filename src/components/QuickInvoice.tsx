@@ -288,31 +288,31 @@ export default function QuickInvoice() {
   };
 
   return (
-    <div className="min-h-screen pb-16">
+    <div className="min-h-screen pb-8">
       {/* Toolbar */}
       <div className="no-print sticky top-0 z-10 border-b border-border bg-card/90 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-3 px-4 py-3">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-2 px-3 py-2">
           <div className="flex items-center gap-2 font-semibold">
-            <div className="grid h-7 w-7 place-items-center rounded-md text-primary-foreground" style={{ background: theme.accent }}>Q</div>
-            <span>QuickInvoice</span>
+            <div className="grid h-6 w-6 place-items-center rounded-md text-primary-foreground text-sm" style={{ background: theme.accent }}>Q</div>
+            <span className="text-sm">QuickInvoice</span>
           </div>
           <div className="flex-1" />
-          <label className="flex items-center gap-2 text-sm">
-            <span className="text-muted-foreground">Currency</span>
+          <label className="flex items-center gap-1.5 text-sm">
+            <span className="text-muted-foreground text-xs">Currency</span>
             <select
               value={inv.currency}
               onChange={(e) => update({ currency: e.target.value })}
-              className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+              className="rounded-md border border-border bg-background px-1.5 py-1 text-xs"
             >
               {Object.keys(CURRENCIES).map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </label>
-          <label className="flex items-center gap-2 text-sm">
-            <span className="text-muted-foreground">Number</span>
+          <label className="flex items-center gap-1.5 text-sm">
+            <span className="text-muted-foreground text-xs">Number</span>
             <select
               value={inv.numberFormat}
               onChange={(e) => update({ numberFormat: e.target.value as NumberFormatKey })}
-              className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+              className="rounded-md border border-border bg-background px-1.5 py-1 text-xs"
             >
               <option value="auto">Auto ({NUMBER_FORMATS[CURRENCY_FORMAT_DEFAULT[inv.currency] ?? "us"].label})</option>
               {(Object.keys(NUMBER_FORMATS) as Array<keyof typeof NUMBER_FORMATS>).map((k) => (
@@ -320,27 +320,27 @@ export default function QuickInvoice() {
               ))}
             </select>
           </label>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
             {(Object.keys(THEMES) as ThemeKey[]).map((k) => (
               <button
                 key={k}
                 onClick={() => update({ theme: k })}
                 aria-label={`Theme ${k}`}
-                className={`h-6 w-6 rounded-full border-2 transition ${inv.theme === k ? "border-foreground scale-110" : "border-transparent"}`}
+                className={`h-5 w-5 rounded-full border-2 transition ${inv.theme === k ? "border-foreground scale-110" : "border-transparent"}`}
                 style={{ background: THEMES[k].accent }}
               />
             ))}
           </div>
-          <label className="flex cursor-pointer items-center gap-2 text-sm">
+          <label className="flex cursor-pointer items-center gap-1.5 text-xs">
             <input
               type="checkbox"
               checked={inv.showPaymentMethod}
               onChange={(e) => update({ showPaymentMethod: e.target.checked })}
-              className="h-4 w-4 rounded border-border accent-primary"
+              className="h-3.5 w-3.5 rounded border-border accent-primary"
             />
-            <span className="text-muted-foreground">Payment method</span>
+            <span className="text-muted-foreground">Payment</span>
           </label>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
             <ToolbarBtn onClick={newInvoice}>New</ToolbarBtn>
             <ToolbarBtn onClick={duplicate}>Duplicate</ToolbarBtn>
             <ToolbarBtn onClick={print}>Print</ToolbarBtn>
@@ -350,10 +350,10 @@ export default function QuickInvoice() {
       </div>
 
       {/* Invoice paper */}
-      <div className="mx-auto mt-8 max-w-[850px] px-4">
+      <div className="mx-auto mt-4 max-w-[850px] px-4">
         <div
           ref={paperRef}
-          className="invoice-paper mx-auto rounded-lg bg-card p-10 shadow-[0_4px_24px_-8px_rgba(15,23,42,0.15)] sm:p-14"
+          className="invoice-paper mx-auto rounded-lg bg-card p-6 shadow-[0_4px_24px_-8px_rgba(15,23,42,0.15)] sm:p-8"
           style={{ aspectRatio: "auto" }}
         >
           {/* Header */}
