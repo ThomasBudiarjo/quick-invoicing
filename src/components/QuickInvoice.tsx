@@ -22,10 +22,27 @@ type Invoice = {
   theme: ThemeKey;
   showPaymentMethod: boolean;
   paymentMethod: string;
+  numberFormat: NumberFormatKey;
 };
+
+type NumberFormatKey = "auto" | "us" | "eu" | "fr" | "ch" | "plain";
 
 const CURRENCIES: Record<string, string> = {
   USD: "$", EUR: "€", GBP: "£", JPY: "¥", INR: "₹", IDR: "Rp", CAD: "C$", AUD: "A$", CHF: "CHF", CNY: "¥", BRL: "R$",
+};
+
+const NUMBER_FORMATS: Record<Exclude<NumberFormatKey, "auto">, { thousand: string; decimal: string; label: string }> = {
+  us:    { thousand: ",", decimal: ".", label: "1,234.56" },
+  eu:    { thousand: ".", decimal: ",", label: "1.234,56" },
+  fr:    { thousand: " ", decimal: ",", label: "1 234,56" },
+  ch:    { thousand: "'", decimal: ".", label: "1'234.56" },
+  plain: { thousand: "",  decimal: ".", label: "1234.56" },
+};
+
+// Per-currency default when format is "auto"
+const CURRENCY_FORMAT_DEFAULT: Record<string, Exclude<NumberFormatKey, "auto">> = {
+  USD: "us", GBP: "us", JPY: "us", INR: "us", CAD: "us", AUD: "us", CNY: "us", CHF: "ch",
+  EUR: "eu", IDR: "eu", BRL: "eu",
 };
 
 const THEMES: Record<ThemeKey, { accent: string; soft: string; text: string }> = {
