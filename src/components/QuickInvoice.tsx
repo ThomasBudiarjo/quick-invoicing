@@ -467,7 +467,7 @@ export default function QuickInvoice() {
                           {sub.included ? (
                             <span className="italic opacity-70">Included</span>
                           ) : (
-                            <NumberEditable value={sub.rate} onChange={(n) => updateSubItem(it.id, sub.id, { rate: n })} />
+                          <NumberEditable value={sub.rate} onChange={(n) => updateSubItem(it.id, sub.id, { rate: n })} currency={inv.currency} numberFormat={inv.numberFormat} />
                           )}
                         </td>
                         <td className="px-3 py-2 text-right">
