@@ -488,8 +488,8 @@ export default function QuickInvoice() {
           </div>
 
           {/* Totals */}
-          <div className="mt-8 flex justify-end">
-            <div className="w-full max-w-xs space-y-2 text-sm">
+          <div className="mt-5 flex justify-end">
+            <div className="w-full max-w-xs space-y-1 text-sm">
               <Row label="Subtotal">{fmtMoney(subtotal, inv.currency, inv.numberFormat)}</Row>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">
@@ -511,24 +511,24 @@ export default function QuickInvoice() {
                 </span>
                 <span>−{fmtMoney(discountAmt, inv.currency, inv.numberFormat)}</span>
               </div>
-              <div className="mt-2 flex items-center justify-between border-t-2 pt-3" style={{ borderColor: theme.accent }}>
+              <div className="mt-1 flex items-center justify-between border-t-2 pt-2" style={{ borderColor: theme.accent }}>
                 <span className="text-base font-semibold" style={{ color: theme.text }}>Total</span>
-                <span className="text-2xl font-bold" style={{ color: theme.text }}>{fmtMoney(total, inv.currency, inv.numberFormat)}</span>
+                <span className="text-xl font-bold" style={{ color: theme.text }}>{fmtMoney(total, inv.currency, inv.numberFormat)}</span>
               </div>
             </div>
           </div>
 
           {/* Payment method */}
           {inv.showPaymentMethod && (
-            <div className="mt-8">
-              <div className="mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>Payment Method</div>
+            <div className="mt-5">
+              <div className="mb-1 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>Payment Method</div>
               <Editable value={inv.paymentMethod} onChange={(v) => update({ paymentMethod: v })} multiline as="div" className="block text-sm text-muted-foreground" placeholder="Bank details, PayPal link, etc." />
             </div>
           )}
 
           {/* Notes */}
-          <div className="mt-12 border-t border-border pt-6">
-            <div className="mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>Notes & Terms</div>
+          <div className="mt-6 border-t border-border pt-3">
+            <div className="mb-1 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>Notes & Terms</div>
             <Editable value={inv.notes} onChange={(v) => update({ notes: v })} multiline as="div" className="block text-sm text-muted-foreground" placeholder="Payment terms, thank-you note, etc." />
           </div>
         </div>
