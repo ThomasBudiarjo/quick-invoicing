@@ -344,7 +344,7 @@ export default function QuickInvoice() {
               </thead>
               <tbody>
                 {inv.items.map((it) => (
-                  <>
+                  <Fragment key={it.id}>
                     <tr key={it.id} className="border-b border-border align-top">
                       <td className="px-3 py-3">
                         <Editable value={it.description} onChange={(v) => updateItem(it.id, { description: v })} multiline as="div" placeholder="Description" />
