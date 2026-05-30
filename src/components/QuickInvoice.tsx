@@ -267,6 +267,15 @@ export default function QuickInvoice() {
               />
             ))}
           </div>
+          <label className="flex cursor-pointer items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={inv.showPaymentMethod}
+              onChange={(e) => update({ showPaymentMethod: e.target.checked })}
+              className="h-4 w-4 rounded border-border accent-primary"
+            />
+            <span className="text-muted-foreground">Payment method</span>
+          </label>
           <div className="flex flex-wrap items-center gap-2">
             <ToolbarBtn onClick={newInvoice}>New</ToolbarBtn>
             <ToolbarBtn onClick={duplicate}>Duplicate</ToolbarBtn>
