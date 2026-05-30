@@ -152,14 +152,23 @@ function Editable({
 }
 
 function NumberEditable({
-  value, onChange, className = "", min = 0,
-}: { value: number; onChange: (n: number) => void; className?: string; min?: number }) {
+  value, onChange, className = "", min = 0, currency, numberFormat,
+}: {
+  value: number; onChange: (n: number) => void; className?: string; min?: number;
+  currency?: string; numberFormat?: NumberFormatKey;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
+  const rawValue = useRef<string>(String(value));
   useEffect(() => {
-    if (ref.current && ref.current.innerText !== String(value)) {
-      ref.current.innerText = String(value);
+    rawValue.current = String(value);
+    if (ref.current) {
+      const display = currency && numberFormat ? fmtNumber(value, currency, numberFormat) : String(value);
+      if (ref.current.innerText !== display) {
+        ref.current.innerText = display;
+      }
     }
-  }, [value]);
+  }, [value, currency, numberFormat]);
+  const formatOnBlur = currency && numberFormat;
   return (
     <span
       ref={ref}
@@ -167,15 +176,21 @@ function NumberEditable({
       suppressContentEditableWarning
       inputMode="decimal"
       className={`editable ${className}`}
+      onFocus={() => {
+        if (ref.current) ref.current.innerText = rawValue.current;
+      }}
       onInput={(e: any) => {
-        const raw = e.currentTarget.innerText.replace(/[^\d.\-]/g, "");
+        const text = e.currentTarget.innerText;
+        const raw = text.replace(/[^\d.\-]/g, "");
         const n = parseFloat(raw);
-        if (!isNaN(n) && n >= min) onChange(n);
-        else if (raw === "" || raw === "-") onChange(0);
+        if (!isNaN(n) && n >= min) { onChange(n); rawValue.current = String(n); }
+        else if (raw === "" || raw === "-") { onChange(0); rawValue.current = "0"; }
       }}
       onBlur={(e: any) => {
         const n = parseFloat(e.currentTarget.innerText);
-        e.currentTarget.innerText = String(isNaN(n) ? 0 : n);
+        const val = isNaN(n) ? 0 : n;
+        rawValue.current = String(val);
+        e.currentTarget.innerText = formatOnBlur ? fmtNumber(val, currency!, numberFormat!) : String(val);
       }}
       onKeyDown={(e: any) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); } }}
     />
