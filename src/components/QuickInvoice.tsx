@@ -403,7 +403,7 @@ export default function QuickInvoice() {
                       <td className="px-3 py-3 text-right">
                         <NumberEditable value={it.rate} onChange={(n) => updateItem(it.id, { rate: n })} />
                       </td>
-                      <td className="px-3 py-3 text-right font-medium">{fmtMoney(lineAmount(it), inv.currency)}</td>
+                      <td className="px-3 py-3 text-right font-medium">{fmtMoney(lineAmount(it), inv.currency, inv.numberFormat)}</td>
                       <td className="no-print px-1 py-3 text-right">
                         <button onClick={() => removeItem(it.id)} className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-destructive" aria-label="Remove">×</button>
                       </td>
@@ -434,7 +434,7 @@ export default function QuickInvoice() {
                           )}
                         </td>
                         <td className="px-3 py-2 text-right">
-                          {sub.included ? <span className="italic opacity-70">Included</span> : fmtMoney(sub.qty * sub.rate, inv.currency)}
+                          {sub.included ? <span className="italic opacity-70">Included</span> : fmtMoney(sub.qty * sub.rate, inv.currency, inv.numberFormat)}
                         </td>
                         <td className="no-print px-1 py-2 text-right">
                           <button onClick={() => removeSubItem(it.id, sub.id)} className="rounded p-1 hover:bg-muted hover:text-destructive" aria-label="Remove sub-item">×</button>
@@ -453,12 +453,12 @@ export default function QuickInvoice() {
           {/* Totals */}
           <div className="mt-8 flex justify-end">
             <div className="w-full max-w-xs space-y-2 text-sm">
-              <Row label="Subtotal">{fmtMoney(subtotal, inv.currency)}</Row>
+              <Row label="Subtotal">{fmtMoney(subtotal, inv.currency, inv.numberFormat)}</Row>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">
                   Tax (<NumberEditable value={inv.taxPercent} onChange={(n) => update({ taxPercent: n })} />%)
                 </span>
-                <span>{fmtMoney(taxAmt, inv.currency)}</span>
+                <span>{fmtMoney(taxAmt, inv.currency, inv.numberFormat)}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">
@@ -472,11 +472,11 @@ export default function QuickInvoice() {
                   </button>{" "}
                   <NumberEditable value={inv.discount} onChange={(n) => update({ discount: n })} />
                 </span>
-                <span>−{fmtMoney(discountAmt, inv.currency)}</span>
+                <span>−{fmtMoney(discountAmt, inv.currency, inv.numberFormat)}</span>
               </div>
               <div className="mt-2 flex items-center justify-between border-t-2 pt-3" style={{ borderColor: theme.accent }}>
                 <span className="text-base font-semibold" style={{ color: theme.text }}>Total</span>
-                <span className="text-2xl font-bold" style={{ color: theme.text }}>{fmtMoney(total, inv.currency)}</span>
+                <span className="text-2xl font-bold" style={{ color: theme.text }}>{fmtMoney(total, inv.currency, inv.numberFormat)}</span>
               </div>
             </div>
           </div>
