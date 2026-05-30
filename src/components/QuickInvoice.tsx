@@ -386,14 +386,29 @@ export default function QuickInvoice() {
                         <td className="px-3 py-2 pl-8">
                           <span className="mr-2 select-none opacity-60">↳</span>
                           <Editable value={sub.description} onChange={(v) => updateSubItem(it.id, sub.id, { description: v })} multiline as="span" placeholder="Sub-item" />
+                          <label className="no-print ml-3 inline-flex cursor-pointer items-center gap-1 align-middle text-[11px]">
+                            <input
+                              type="checkbox"
+                              checked={sub.included ?? false}
+                              onChange={(e) => updateSubItem(it.id, sub.id, { included: e.target.checked })}
+                              className="h-3 w-3 rounded border-border accent-primary"
+                            />
+                            Included
+                          </label>
                         </td>
                         <td className="px-3 py-2 text-right">
                           <NumberEditable value={sub.qty} onChange={(n) => updateSubItem(it.id, sub.id, { qty: n })} />
                         </td>
                         <td className="px-3 py-2 text-right">
-                          <NumberEditable value={sub.rate} onChange={(n) => updateSubItem(it.id, sub.id, { rate: n })} />
+                          {sub.included ? (
+                            <span className="italic opacity-70">Included</span>
+                          ) : (
+                            <NumberEditable value={sub.rate} onChange={(n) => updateSubItem(it.id, sub.id, { rate: n })} />
+                          )}
                         </td>
-                        <td className="px-3 py-2 text-right">{fmtMoney(sub.qty * sub.rate, inv.currency)}</td>
+                        <td className="px-3 py-2 text-right">
+                          {sub.included ? <span className="italic opacity-70">Included</span> : fmtMoney(sub.qty * sub.rate, inv.currency)}
+                        </td>
                         <td className="no-print px-1 py-2 text-right">
                           <button onClick={() => removeSubItem(it.id, sub.id)} className="rounded p-1 hover:bg-muted hover:text-destructive" aria-label="Remove sub-item">×</button>
                         </td>
