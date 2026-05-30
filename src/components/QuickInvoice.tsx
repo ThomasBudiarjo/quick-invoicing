@@ -555,7 +555,7 @@ function ToolbarBtn({ children, onClick, primary }: { children: ReactNode; onCli
 function Party({ label, theme, children }: { label: string; theme: { accent: string }; children: ReactNode }) {
   return (
     <div>
-      <div className="mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>{label}</div>
+      <div className="mb-1 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>{label}</div>
       {children}
     </div>
   );
