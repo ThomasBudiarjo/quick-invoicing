@@ -65,6 +65,8 @@ const blankInvoice = (number = "INV-0001"): Invoice => ({
   notes: "Thank you for your business! Payment due within 30 days.",
   currency: "USD",
   theme: "blue",
+  showPaymentMethod: false,
+  paymentMethod: "Bank Transfer: Your Company\nBank: ABC Bank\nAccount: 1234567890",
 });
 
 const STORAGE_KEY = "quickinvoice:v1";
