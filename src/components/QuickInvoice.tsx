@@ -409,14 +409,14 @@ export default function QuickInvoice() {
           </div>
 
           {/* Line items */}
-          <div className="mt-10">
+          <div className="mt-6">
             <table className="w-full text-sm">
               <thead>
                 <tr style={{ background: theme.soft, color: theme.text }}>
-                  <th className="px-3 py-2 text-left font-medium">Description</th>
-                  <th className="w-20 px-3 py-2 text-right font-medium">Qty</th>
-                  <th className="w-28 px-3 py-2 text-right font-medium">Rate</th>
-                  <th className="w-32 px-3 py-2 text-right font-medium">Amount</th>
+                  <th className="px-2 py-1.5 text-left text-xs font-medium">Description</th>
+                  <th className="w-20 px-2 py-1.5 text-right text-xs font-medium">Qty</th>
+                  <th className="w-28 px-2 py-1.5 text-right text-xs font-medium">Rate</th>
+                  <th className="w-32 px-2 py-1.5 text-right text-xs font-medium">Amount</th>
                   <th className="no-print w-8" />
                 </tr>
               </thead>
@@ -424,33 +424,33 @@ export default function QuickInvoice() {
                 {inv.items.map((it) => (
                   <Fragment key={it.id}>
                     <tr key={it.id} className="border-b border-border align-top">
-                      <td className="px-3 py-3">
+                      <td className="px-2 py-1.5">
                         <Editable value={it.description} onChange={(v) => updateItem(it.id, { description: v })} multiline as="div" placeholder="Description" />
                         <button
                           onClick={() => addSubItem(it.id)}
-                          className="no-print mt-1 text-xs font-medium"
+                          className="no-print text-xs font-medium"
                           style={{ color: theme.accent }}
                         >
                           + Add sub-item
                         </button>
                       </td>
-                      <td className="px-3 py-3 text-right">
+                      <td className="px-2 py-1.5 text-right">
                         <NumberEditable value={it.qty} onChange={(n) => updateItem(it.id, { qty: n })} />
                       </td>
-                      <td className="px-3 py-3 text-right">
+                      <td className="px-2 py-1.5 text-right">
                         <NumberEditable value={it.rate} onChange={(n) => updateItem(it.id, { rate: n })} currency={inv.currency} numberFormat={inv.numberFormat} />
                       </td>
-                      <td className="px-3 py-3 text-right font-medium">{fmtMoney(lineAmount(it), inv.currency, inv.numberFormat)}</td>
-                      <td className="no-print px-1 py-3 text-right">
+                      <td className="px-2 py-1.5 text-right font-medium">{fmtMoney(lineAmount(it), inv.currency, inv.numberFormat)}</td>
+                      <td className="no-print px-1 py-1.5 text-right">
                         <button onClick={() => removeItem(it.id)} className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-destructive" aria-label="Remove">×</button>
                       </td>
                     </tr>
                     {(it.subItems ?? []).map((sub) => (
                       <tr key={sub.id} className="border-b border-border/50 align-top text-muted-foreground">
-                        <td className="px-3 py-2 pl-8">
-                          <span className="mr-2 select-none opacity-60">↳</span>
+                        <td className="px-2 py-1 pl-6">
+                          <span className="mr-1.5 select-none opacity-60">↳</span>
                           <Editable value={sub.description} onChange={(v) => updateSubItem(it.id, sub.id, { description: v })} multiline as="span" placeholder="Sub-item" />
-                          <label className="no-print ml-3 inline-flex cursor-pointer items-center gap-1 align-middle text-[11px]">
+                          <label className="no-print ml-2 inline-flex cursor-pointer items-center gap-1 align-middle text-[11px]">
                             <input
                               type="checkbox"
                               checked={sub.included ?? false}
@@ -460,20 +460,20 @@ export default function QuickInvoice() {
                             Included
                           </label>
                         </td>
-                        <td className="px-3 py-2 text-right">
+                        <td className="px-2 py-1 text-right">
                           <NumberEditable value={sub.qty} onChange={(n) => updateSubItem(it.id, sub.id, { qty: n })} />
                         </td>
-                        <td className="px-3 py-2 text-right">
+                        <td className="px-2 py-1 text-right">
                           {sub.included ? (
                             <span className="italic opacity-70">Included</span>
                           ) : (
                           <NumberEditable value={sub.rate} onChange={(n) => updateSubItem(it.id, sub.id, { rate: n })} currency={inv.currency} numberFormat={inv.numberFormat} />
                           )}
                         </td>
-                        <td className="px-3 py-2 text-right">
+                        <td className="px-2 py-1 text-right">
                           {sub.included ? <span className="italic opacity-70">Included</span> : fmtMoney(sub.qty * sub.rate, inv.currency, inv.numberFormat)}
                         </td>
-                        <td className="no-print px-1 py-2 text-right">
+                        <td className="no-print px-1 py-1 text-right">
                           <button onClick={() => removeSubItem(it.id, sub.id)} className="rounded p-1 hover:bg-muted hover:text-destructive" aria-label="Remove sub-item">×</button>
                         </td>
                       </tr>
@@ -482,7 +482,7 @@ export default function QuickInvoice() {
                 ))}
               </tbody>
             </table>
-            <button onClick={addItem} className="no-print mt-3 text-sm font-medium" style={{ color: theme.accent }}>
+            <button onClick={addItem} className="no-print mt-1 text-sm font-medium" style={{ color: theme.accent }}>
               + Add line
             </button>
           </div>
