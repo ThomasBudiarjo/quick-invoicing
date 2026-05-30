@@ -4,6 +4,7 @@ type SubItem = { id: string; description: string; qty: number; rate: number };
 type LineItem = { id: string; description: string; qty: number; rate: number; subItems?: SubItem[] };
 type DiscountType = "flat" | "percent";
 type ThemeKey = "blue" | "green" | "slate" | "rose" | "amber";
+type PaymentMethodKey = "bank" | "paypal" | "cash" | "other";
 
 type Invoice = {
   logo: string | null;
