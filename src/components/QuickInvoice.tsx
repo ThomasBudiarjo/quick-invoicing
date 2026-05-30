@@ -21,7 +21,7 @@ type Invoice = {
 };
 
 const CURRENCIES: Record<string, string> = {
-  USD: "$", EUR: "€", GBP: "£", JPY: "¥", INR: "₹", CAD: "C$", AUD: "A$", CHF: "CHF", CNY: "¥", BRL: "R$",
+  USD: "$", EUR: "€", GBP: "£", JPY: "¥", INR: "₹", IDR: "Rp", CAD: "C$", AUD: "A$", CHF: "CHF", CNY: "¥", BRL: "R$",
 };
 
 const THEMES: Record<ThemeKey, { accent: string; soft: string; text: string }> = {
