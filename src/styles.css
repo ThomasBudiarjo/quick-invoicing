@@ -72,32 +72,18 @@
 
 /* Print styles */
 @media print {
-  html, body {
-    background: white !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    min-height: 0 !important;
-    height: auto !important;
-  }
-  body * { visibility: hidden; }
-  .invoice-paper, .invoice-paper * { visibility: visible; }
+  html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
   .no-print { display: none !important; }
   .invoice-paper {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
     box-shadow: none !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 0.25in !important;
     border-radius: 0 !important;
     max-width: 100% !important;
     width: 100% !important;
-    min-height: 0 !important;
-    height: auto !important;
-    overflow: hidden !important;
   }
   .editable { outline: none !important; background: transparent !important; }
-  @page { margin: 0.5in 0.4in 0.3in; size: A4; }
+  @page { margin: 0; size: A4; }
 }
 
 /* When exporting via html2pdf */
