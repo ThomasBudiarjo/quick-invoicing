@@ -195,7 +195,7 @@ export default function QuickInvoice() {
     }));
 
   const lineAmount = (it: LineItem) =>
-    it.qty * it.rate + (it.subItems ?? []).reduce((s, x) => s + x.qty * x.rate, 0);
+    it.qty * it.rate + ((it.includeSubInTotal ?? true) ? (it.subItems ?? []).reduce((s, x) => s + x.qty * x.rate, 0) : 0);
   const subtotal = inv.items.reduce((s, it) => s + lineAmount(it), 0);
   const taxAmt = subtotal * (inv.taxPercent / 100);
   const discountAmt = inv.discountType === "percent" ? subtotal * (inv.discount / 100) : inv.discount;
