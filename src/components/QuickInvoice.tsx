@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
+import { Settings, Plus, Copy, Printer, Download } from "lucide-react";
 
 type SubItem = { id: string; description: string; qty: number; rate: number; included?: boolean };
 type LineItem = { id: string; description: string; qty: number; rate: number; subItems?: SubItem[] };
@@ -200,6 +201,7 @@ function NumberEditable({
 export default function QuickInvoice() {
   const [inv, setInv] = useState<Invoice>(() => blankInvoice());
   const [hydrated, setHydrated] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const paperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { setInv(loadInvoice()); setHydrated(true); }, []);
@@ -286,64 +288,97 @@ export default function QuickInvoice() {
   return (
     <div className="min-h-screen pb-16">
       {/* Toolbar */}
-      <div className="no-print sticky top-0 z-10 border-b border-border bg-card/90 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-3 px-4 py-3">
+      <div className="no-print sticky top-0 z-10 border-b border-border bg-card/95 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-2.5">
+          {/* Brand */}
           <div className="flex items-center gap-2 font-semibold">
-            <div className="grid h-7 w-7 place-items-center rounded-md text-primary-foreground" style={{ background: theme.accent }}>Q</div>
-            <span>QuickInvoice</span>
+            <div className="grid h-7 w-7 place-items-center rounded-md text-sm text-primary-foreground" style={{ background: theme.accent }}>Q</div>
+            <span className="text-sm tracking-tight">QuickInvoice</span>
           </div>
+
           <div className="flex-1" />
-          <label className="flex items-center gap-2 text-sm">
-            <span className="text-muted-foreground">Currency</span>
-            <select
-              value={inv.currency}
-              onChange={(e) => update({ currency: e.target.value })}
-              className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+
+          {/* Settings popover */}
+          <div className="relative">
+            <button
+              onClick={() => setSettingsOpen((v) => !v)}
+              className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-background px-2.5 text-sm text-foreground hover:bg-muted"
+              aria-haspopup="true"
+              aria-expanded={settingsOpen}
             >
-              {Object.keys(CURRENCIES).map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <span className="text-muted-foreground">Number</span>
-            <select
-              value={inv.numberFormat}
-              onChange={(e) => update({ numberFormat: e.target.value as NumberFormatKey })}
-              className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
-            >
-              <option value="auto">Auto ({NUMBER_FORMATS[CURRENCY_FORMAT_DEFAULT[inv.currency] ?? "us"].label})</option>
-              {(Object.keys(NUMBER_FORMATS) as Array<keyof typeof NUMBER_FORMATS>).map((k) => (
-                <option key={k} value={k}>{NUMBER_FORMATS[k].label}</option>
-              ))}
-            </select>
-          </label>
-          <div className="flex items-center gap-1.5">
-            {(Object.keys(THEMES) as ThemeKey[]).map((k) => (
-              <button
-                key={k}
-                onClick={() => update({ theme: k })}
-                aria-label={`Theme ${k}`}
-                className={`h-6 w-6 rounded-full border-2 transition ${inv.theme === k ? "border-foreground scale-110" : "border-transparent"}`}
-                style={{ background: THEMES[k].accent }}
-              />
-            ))}
+              <Settings className="h-3.5 w-3.5" />
+              <span>Settings</span>
+            </button>
+            {settingsOpen && (
+              <>
+                <div className="fixed inset-0 z-20" onClick={() => setSettingsOpen(false)} />
+                <div className="absolute right-0 z-30 mt-1.5 w-72 rounded-lg border border-border bg-card p-3 shadow-lg">
+                  <div className="space-y-3">
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-muted-foreground">Currency</label>
+                      <select
+                        value={inv.currency}
+                        onChange={(e) => update({ currency: e.target.value })}
+                        className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+                      >
+                        {Object.keys(CURRENCIES).map((c) => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-muted-foreground">Number format</label>
+                      <select
+                        value={inv.numberFormat}
+                        onChange={(e) => update({ numberFormat: e.target.value as NumberFormatKey })}
+                        className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+                      >
+                        <option value="auto">Auto ({NUMBER_FORMATS[CURRENCY_FORMAT_DEFAULT[inv.currency] ?? "us"].label})</option>
+                        {(Object.keys(NUMBER_FORMATS) as Array<keyof typeof NUMBER_FORMATS>).map((k) => (
+                          <option key={k} value={k}>{NUMBER_FORMATS[k].label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Accent color</label>
+                      <div className="flex items-center gap-1.5">
+                        {(Object.keys(THEMES) as ThemeKey[]).map((k) => (
+                          <button
+                            key={k}
+                            onClick={() => update({ theme: k })}
+                            aria-label={`Theme ${k}`}
+                            className={`h-6 w-6 rounded-full border-2 transition ${inv.theme === k ? "border-foreground scale-110" : "border-transparent"}`}
+                            style={{ background: THEMES[k].accent }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <label className="flex cursor-pointer items-center justify-between gap-2 border-t border-border pt-2 text-sm">
+                      <span className="text-foreground">Show payment method</span>
+                      <input
+                        type="checkbox"
+                        checked={inv.showPaymentMethod}
+                        onChange={(e) => update({ showPaymentMethod: e.target.checked })}
+                        className="h-4 w-4 rounded border-border accent-primary"
+                      />
+                    </label>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
-          <label className="flex cursor-pointer items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={inv.showPaymentMethod}
-              onChange={(e) => update({ showPaymentMethod: e.target.checked })}
-              className="h-4 w-4 rounded border-border accent-primary"
-            />
-            <span className="text-muted-foreground">Payment method</span>
-          </label>
-          <div className="flex flex-wrap items-center gap-2">
-            <ToolbarBtn onClick={newInvoice}>New</ToolbarBtn>
-            <ToolbarBtn onClick={duplicate}>Duplicate</ToolbarBtn>
-            <ToolbarBtn onClick={print}>Print</ToolbarBtn>
-            <ToolbarBtn onClick={downloadPDF} primary>Download PDF</ToolbarBtn>
+
+          {/* Divider */}
+          <div className="h-6 w-px bg-border" />
+
+          {/* Actions */}
+          <div className="flex items-center gap-1.5">
+            <ToolbarBtn onClick={newInvoice}><Plus className="h-3.5 w-3.5" />New</ToolbarBtn>
+            <ToolbarBtn onClick={duplicate}><Copy className="h-3.5 w-3.5" />Duplicate</ToolbarBtn>
+            <ToolbarBtn onClick={print}><Printer className="h-3.5 w-3.5" />Print</ToolbarBtn>
+            <ToolbarBtn onClick={downloadPDF} primary><Download className="h-3.5 w-3.5" />Download PDF</ToolbarBtn>
           </div>
         </div>
       </div>
+
 
       {/* Invoice paper */}
       <div className="mx-auto mt-10 max-w-[850px] px-4">
