@@ -394,17 +394,17 @@ export default function QuickInvoice() {
           </div>
 
           {/* From / To */}
-          <div className="mt-10 grid gap-8 sm:grid-cols-2">
+          <div className="mt-6 grid gap-6 sm:grid-cols-2">
             <Party label="From" theme={theme}>
               <Editable value={inv.from.name} onChange={(v) => updateFrom({ name: v })} className="block text-base font-semibold" placeholder="Your company" />
-              <Editable value={inv.from.address} onChange={(v) => updateFrom({ address: v })} multiline as="div" className="mt-1 block text-sm text-muted-foreground" placeholder="Address" />
-              <Editable value={inv.from.email} onChange={(v) => updateFrom({ email: v })} className="mt-1 block text-sm" placeholder="Email" />
+              <Editable value={inv.from.address} onChange={(v) => updateFrom({ address: v })} multiline as="div" className="mt-0.5 block text-sm text-muted-foreground" placeholder="Address" />
+              <Editable value={inv.from.email} onChange={(v) => updateFrom({ email: v })} className="block text-sm" placeholder="Email" />
               <Editable value={inv.from.phone} onChange={(v) => updateFrom({ phone: v })} className="block text-sm" placeholder="Phone" />
             </Party>
             <Party label="Bill To" theme={theme}>
               <Editable value={inv.to.name} onChange={(v) => updateTo({ name: v })} className="block text-base font-semibold" placeholder="Client name" />
-              <Editable value={inv.to.address} onChange={(v) => updateTo({ address: v })} multiline as="div" className="mt-1 block text-sm text-muted-foreground" placeholder="Address" />
-              <Editable value={inv.to.email} onChange={(v) => updateTo({ email: v })} className="mt-1 block text-sm" placeholder="Email" />
+              <Editable value={inv.to.address} onChange={(v) => updateTo({ address: v })} multiline as="div" className="mt-0.5 block text-sm text-muted-foreground" placeholder="Address" />
+              <Editable value={inv.to.email} onChange={(v) => updateTo({ email: v })} className="block text-sm" placeholder="Email" />
             </Party>
           </div>
 
