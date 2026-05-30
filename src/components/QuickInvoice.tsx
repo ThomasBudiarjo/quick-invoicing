@@ -396,15 +396,15 @@ export default function QuickInvoice() {
           {/* From / To */}
           <div className="mt-6 grid gap-6 sm:grid-cols-2">
             <Party label="From" theme={theme}>
-              <Editable value={inv.from.name} onChange={(v) => updateFrom({ name: v })} className="block text-base font-semibold" placeholder="Your company" />
-              <Editable value={inv.from.address} onChange={(v) => updateFrom({ address: v })} multiline as="div" className="mt-1 block text-sm text-muted-foreground" placeholder="Address" />
-              <Editable value={inv.from.email} onChange={(v) => updateFrom({ email: v })} className="mt-1 block text-sm" placeholder="Email" />
+              <Editable value={inv.from.name} onChange={(v) => updateFrom({ name: v })} className="block text-sm font-semibold" placeholder="Your company" />
+              <Editable value={inv.from.address} onChange={(v) => updateFrom({ address: v })} multiline as="div" className="mt-0.5 block text-sm text-muted-foreground" placeholder="Address" />
+              <Editable value={inv.from.email} onChange={(v) => updateFrom({ email: v })} className="block text-sm" placeholder="Email" />
               <Editable value={inv.from.phone} onChange={(v) => updateFrom({ phone: v })} className="block text-sm" placeholder="Phone" />
             </Party>
             <Party label="Bill To" theme={theme}>
-              <Editable value={inv.to.name} onChange={(v) => updateTo({ name: v })} className="block text-base font-semibold" placeholder="Client name" />
-              <Editable value={inv.to.address} onChange={(v) => updateTo({ address: v })} multiline as="div" className="mt-1 block text-sm text-muted-foreground" placeholder="Address" />
-              <Editable value={inv.to.email} onChange={(v) => updateTo({ email: v })} className="mt-1 block text-sm" placeholder="Email" />
+              <Editable value={inv.to.name} onChange={(v) => updateTo({ name: v })} className="block text-sm font-semibold" placeholder="Client name" />
+              <Editable value={inv.to.address} onChange={(v) => updateTo({ address: v })} multiline as="div" className="mt-0.5 block text-sm text-muted-foreground" placeholder="Address" />
+              <Editable value={inv.to.email} onChange={(v) => updateTo({ email: v })} className="block text-sm" placeholder="Email" />
             </Party>
           </div>
 
@@ -555,7 +555,7 @@ function ToolbarBtn({ children, onClick, primary }: { children: ReactNode; onCli
 function Party({ label, theme, children }: { label: string; theme: { accent: string }; children: ReactNode }) {
   return (
     <div>
-      <div className="mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>{label}</div>
+      <div className="mb-1 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>{label}</div>
       {children}
     </div>
   );
