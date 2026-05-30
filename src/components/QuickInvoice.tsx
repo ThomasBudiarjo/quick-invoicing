@@ -113,6 +113,15 @@ function fmtMoney(n: number, currency: string, fmt: NumberFormatKey = "auto") {
   return `${sign}${sym}${grouped}${decimal}${decPart}`;
 }
 
+function fmtNumber(n: number, currency: string, fmt: NumberFormatKey = "auto") {
+  const { thousand, decimal } = resolveFormat(currency, fmt);
+  const safe = isFinite(n) ? n : 0;
+  const [intPart, decPart] = Math.abs(safe).toFixed(2).split(".");
+  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousand);
+  const sign = safe < 0 ? "-" : "";
+  return `${sign}${grouped}${decimal}${decPart}`;
+}
+
 /** Inline editable text field — uncontrolled contentEditable to keep caret stable. */
 function Editable({
   value, onChange, placeholder, className = "", multiline = false, as = "span",
@@ -143,14 +152,23 @@ function Editable({
 }
 
 function NumberEditable({
-  value, onChange, className = "", min = 0,
-}: { value: number; onChange: (n: number) => void; className?: string; min?: number }) {
+  value, onChange, className = "", min = 0, currency, numberFormat,
+}: {
+  value: number; onChange: (n: number) => void; className?: string; min?: number;
+  currency?: string; numberFormat?: NumberFormatKey;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
+  const rawValue = useRef<string>(String(value));
   useEffect(() => {
-    if (ref.current && ref.current.innerText !== String(value)) {
-      ref.current.innerText = String(value);
+    rawValue.current = String(value);
+    if (ref.current) {
+      const display = currency && numberFormat ? fmtNumber(value, currency, numberFormat) : String(value);
+      if (ref.current.innerText !== display) {
+        ref.current.innerText = display;
+      }
     }
-  }, [value]);
+  }, [value, currency, numberFormat]);
+  const formatOnBlur = currency && numberFormat;
   return (
     <span
       ref={ref}
@@ -158,15 +176,21 @@ function NumberEditable({
       suppressContentEditableWarning
       inputMode="decimal"
       className={`editable ${className}`}
+      onFocus={() => {
+        if (ref.current) ref.current.innerText = rawValue.current;
+      }}
       onInput={(e: any) => {
-        const raw = e.currentTarget.innerText.replace(/[^\d.\-]/g, "");
+        const text = e.currentTarget.innerText;
+        const raw = text.replace(/[^\d.\-]/g, "");
         const n = parseFloat(raw);
-        if (!isNaN(n) && n >= min) onChange(n);
-        else if (raw === "" || raw === "-") onChange(0);
+        if (!isNaN(n) && n >= min) { onChange(n); rawValue.current = String(n); }
+        else if (raw === "" || raw === "-") { onChange(0); rawValue.current = "0"; }
       }}
       onBlur={(e: any) => {
         const n = parseFloat(e.currentTarget.innerText);
-        e.currentTarget.innerText = String(isNaN(n) ? 0 : n);
+        const val = isNaN(n) ? 0 : n;
+        rawValue.current = String(val);
+        e.currentTarget.innerText = formatOnBlur ? fmtNumber(val, currency!, numberFormat!) : String(val);
       }}
       onKeyDown={(e: any) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.blur(); } }}
     />
@@ -414,7 +438,7 @@ export default function QuickInvoice() {
                         <NumberEditable value={it.qty} onChange={(n) => updateItem(it.id, { qty: n })} />
                       </td>
                       <td className="px-3 py-3 text-right">
-                        <NumberEditable value={it.rate} onChange={(n) => updateItem(it.id, { rate: n })} />
+                        <NumberEditable value={it.rate} onChange={(n) => updateItem(it.id, { rate: n })} currency={inv.currency} numberFormat={inv.numberFormat} />
                       </td>
                       <td className="px-3 py-3 text-right font-medium">{fmtMoney(lineAmount(it), inv.currency, inv.numberFormat)}</td>
                       <td className="no-print px-1 py-3 text-right">
@@ -443,7 +467,7 @@ export default function QuickInvoice() {
                           {sub.included ? (
                             <span className="italic opacity-70">Included</span>
                           ) : (
-                            <NumberEditable value={sub.rate} onChange={(n) => updateSubItem(it.id, sub.id, { rate: n })} />
+                          <NumberEditable value={sub.rate} onChange={(n) => updateSubItem(it.id, sub.id, { rate: n })} currency={inv.currency} numberFormat={inv.numberFormat} />
                           )}
                         </td>
                         <td className="px-3 py-2 text-right">
