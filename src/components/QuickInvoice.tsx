@@ -520,15 +520,15 @@ export default function QuickInvoice() {
 
           {/* Payment method */}
           {inv.showPaymentMethod && (
-            <div className="mt-8">
-              <div className="mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>Payment Method</div>
+            <div className="mt-5">
+              <div className="mb-1 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>Payment Method</div>
               <Editable value={inv.paymentMethod} onChange={(v) => update({ paymentMethod: v })} multiline as="div" className="block text-sm text-muted-foreground" placeholder="Bank details, PayPal link, etc." />
             </div>
           )}
 
           {/* Notes */}
-          <div className="mt-12 border-t border-border pt-6">
-            <div className="mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>Notes & Terms</div>
+          <div className="mt-8 border-t border-border pt-3">
+            <div className="mb-1 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>Notes & Terms</div>
             <Editable value={inv.notes} onChange={(v) => update({ notes: v })} multiline as="div" className="block text-sm text-muted-foreground" placeholder="Payment terms, thank-you note, etc." />
           </div>
         </div>
