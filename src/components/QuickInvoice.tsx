@@ -4,6 +4,7 @@ type SubItem = { id: string; description: string; qty: number; rate: number };
 type LineItem = { id: string; description: string; qty: number; rate: number; subItems?: SubItem[] };
 type DiscountType = "flat" | "percent";
 type ThemeKey = "blue" | "green" | "slate" | "rose" | "amber";
+type PaymentMethodKey = "bank" | "paypal" | "cash" | "other";
 
 type Invoice = {
   logo: string | null;
@@ -19,6 +20,8 @@ type Invoice = {
   notes: string;
   currency: string;
   theme: ThemeKey;
+  showPaymentMethod: boolean;
+  paymentMethod: string;
 };
 
 const CURRENCIES: Record<string, string> = {
@@ -62,6 +65,8 @@ const blankInvoice = (number = "INV-0001"): Invoice => ({
   notes: "Thank you for your business! Payment due within 30 days.",
   currency: "USD",
   theme: "blue",
+  showPaymentMethod: false,
+  paymentMethod: "Bank Transfer: Your Company\nBank: ABC Bank\nAccount: 1234567890",
 });
 
 const STORAGE_KEY = "quickinvoice:v1";
@@ -262,6 +267,15 @@ export default function QuickInvoice() {
               />
             ))}
           </div>
+          <label className="flex cursor-pointer items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={inv.showPaymentMethod}
+              onChange={(e) => update({ showPaymentMethod: e.target.checked })}
+              className="h-4 w-4 rounded border-border accent-primary"
+            />
+            <span className="text-muted-foreground">Payment method</span>
+          </label>
           <div className="flex flex-wrap items-center gap-2">
             <ToolbarBtn onClick={newInvoice}>New</ToolbarBtn>
             <ToolbarBtn onClick={duplicate}>Duplicate</ToolbarBtn>
@@ -424,6 +438,14 @@ export default function QuickInvoice() {
               </div>
             </div>
           </div>
+
+          {/* Payment method */}
+          {inv.showPaymentMethod && (
+            <div className="mt-8">
+              <div className="mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accent }}>Payment Method</div>
+              <Editable value={inv.paymentMethod} onChange={(v) => update({ paymentMethod: v })} multiline as="div" className="block text-sm text-muted-foreground" placeholder="Bank details, PayPal link, etc." />
+            </div>
+          )}
 
           {/* Notes */}
           <div className="mt-12 border-t border-border pt-6">
