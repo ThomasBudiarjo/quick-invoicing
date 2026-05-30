@@ -357,10 +357,10 @@ export default function QuickInvoice() {
           style={{ aspectRatio: "auto" }}
         >
           {/* Header */}
-          <div className="flex flex-wrap items-start justify-between gap-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-bold tracking-tight" style={{ color: theme.text }}>INVOICE</h1>
-              <div className="mt-3 space-y-1 text-sm">
+              <h1 className="text-3xl font-bold tracking-tight" style={{ color: theme.text }}>INVOICE</h1>
+              <div className="mt-2 space-y-0.5 text-sm">
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Invoice #</span>
                   <Editable value={inv.invoiceNumber} onChange={(v) => update({ invoiceNumber: v })} className="font-medium" />
