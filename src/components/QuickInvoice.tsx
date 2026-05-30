@@ -57,7 +57,7 @@ const blankInvoice = (number = "INV-0001"): Invoice => ({
   from: { name: "Your Company", address: "123 Main St\nCity, State 00000", email: "hello@company.com", phone: "+1 (555) 000-0000" },
   to: { name: "Client Name", address: "456 Client Ave\nCity, State 00000", email: "client@example.com" },
   items: [
-    { id: uid(), description: "Service or product description", qty: 1, rate: 100, subItems: [] },
+    { id: uid(), description: "Service or product description", qty: 1, rate: 100, subItems: [], includeSubInTotal: true },
   ],
   taxPercent: 0,
   discount: 0,
