@@ -295,6 +295,25 @@ export default function QuickInvoice() {
           {/* Header */}
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div>
+              <h1 className="text-4xl font-bold tracking-tight" style={{ color: theme.text }}>INVOICE</h1>
+              <div className="mt-3 space-y-1 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">Invoice #</span>
+                  <Editable value={inv.invoiceNumber} onChange={(v) => update({ invoiceNumber: v })} className="font-medium" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">Issued</span>
+                  <input type="date" value={inv.issueDate} onChange={(e) => update({ issueDate: e.target.value })}
+                    className="rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-border focus:border-primary focus:outline-none" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">Due</span>
+                  <input type="date" value={inv.dueDate} onChange={(e) => update({ dueDate: e.target.value })}
+                    className="rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-border focus:border-primary focus:outline-none" />
+                </div>
+              </div>
+            </div>
+            <div className="text-right">
               {inv.logo ? (
                 <label className="block cursor-pointer">
                   <img src={inv.logo} alt="Logo" className="max-h-20 max-w-[200px] object-contain" />
@@ -307,25 +326,6 @@ export default function QuickInvoice() {
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files && handleLogo(e.target.files[0])} />
                 </label>
               )}
-            </div>
-            <div className="text-right">
-              <h1 className="text-4xl font-bold tracking-tight" style={{ color: theme.text }}>INVOICE</h1>
-              <div className="mt-3 space-y-1 text-sm">
-                <div className="flex items-center justify-end gap-2">
-                  <span className="text-muted-foreground">Invoice #</span>
-                  <Editable value={inv.invoiceNumber} onChange={(v) => update({ invoiceNumber: v })} className="font-medium" />
-                </div>
-                <div className="flex items-center justify-end gap-2">
-                  <span className="text-muted-foreground">Issued</span>
-                  <input type="date" value={inv.issueDate} onChange={(e) => update({ issueDate: e.target.value })}
-                    className="rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-border focus:border-primary focus:outline-none" />
-                </div>
-                <div className="flex items-center justify-end gap-2">
-                  <span className="text-muted-foreground">Due</span>
-                  <input type="date" value={inv.dueDate} onChange={(e) => update({ dueDate: e.target.value })}
-                    className="rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-border focus:border-primary focus:outline-none" />
-                </div>
-              </div>
             </div>
           </div>
 
