@@ -84,6 +84,7 @@ const blankInvoice = (number = "INV-0001"): Invoice => ({
   theme: "blue",
   showPaymentMethod: false,
   paymentMethod: "Bank Transfer: Your Company\nBank: ABC Bank\nAccount: 1234567890",
+  numberFormat: "auto",
 });
 
 const STORAGE_KEY = "quickinvoice:v1";
@@ -97,10 +98,19 @@ function loadInvoice(): Invoice {
   } catch { return blankInvoice(); }
 }
 
-function fmtMoney(n: number, currency: string) {
+function resolveFormat(currency: string, fmt: NumberFormatKey) {
+  const key = fmt === "auto" ? (CURRENCY_FORMAT_DEFAULT[currency] ?? "us") : fmt;
+  return NUMBER_FORMATS[key];
+}
+
+function fmtMoney(n: number, currency: string, fmt: NumberFormatKey = "auto") {
   const sym = CURRENCIES[currency] ?? "";
-  const v = (isFinite(n) ? n : 0).toFixed(2);
-  return `${sym}${v}`;
+  const { thousand, decimal } = resolveFormat(currency, fmt);
+  const safe = isFinite(n) ? n : 0;
+  const [intPart, decPart] = Math.abs(safe).toFixed(2).split(".");
+  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousand);
+  const sign = safe < 0 ? "-" : "";
+  return `${sign}${sym}${grouped}${decimal}${decPart}`;
 }
 
 /** Inline editable text field — uncontrolled contentEditable to keep caret stable. */
