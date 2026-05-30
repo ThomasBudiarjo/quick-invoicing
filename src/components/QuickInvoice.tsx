@@ -350,10 +350,10 @@ export default function QuickInvoice() {
       </div>
 
       {/* Invoice paper */}
-      <div className="mx-auto mt-8 max-w-[850px] px-4">
+      <div className="mx-auto mt-4 max-w-[850px] px-4">
         <div
           ref={paperRef}
-          className="invoice-paper mx-auto rounded-lg bg-card p-10 shadow-[0_4px_24px_-8px_rgba(15,23,42,0.15)] sm:p-14"
+          className="invoice-paper mx-auto rounded-lg bg-card p-6 shadow-[0_4px_24px_-8px_rgba(15,23,42,0.15)] sm:p-8"
           style={{ aspectRatio: "auto" }}
         >
           {/* Header */}
