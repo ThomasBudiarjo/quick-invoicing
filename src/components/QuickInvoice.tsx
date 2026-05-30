@@ -20,6 +20,8 @@ type Invoice = {
   notes: string;
   currency: string;
   theme: ThemeKey;
+  showPaymentMethod: boolean;
+  paymentMethod: string;
 };
 
 const CURRENCIES: Record<string, string> = {
