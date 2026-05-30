@@ -74,6 +74,7 @@
 @media print {
   html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
   .no-print { display: none !important; }
+  .min-h-screen { min-height: 0 !important; }
   .invoice-paper {
     box-shadow: none !important;
     margin: 0 !important;
