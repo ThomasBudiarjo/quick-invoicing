@@ -113,6 +113,15 @@ function fmtMoney(n: number, currency: string, fmt: NumberFormatKey = "auto") {
   return `${sign}${sym}${grouped}${decimal}${decPart}`;
 }
 
+function fmtNumber(n: number, currency: string, fmt: NumberFormatKey = "auto") {
+  const { thousand, decimal } = resolveFormat(currency, fmt);
+  const safe = isFinite(n) ? n : 0;
+  const [intPart, decPart] = Math.abs(safe).toFixed(2).split(".");
+  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousand);
+  const sign = safe < 0 ? "-" : "";
+  return `${sign}${grouped}${decimal}${decPart}`;
+}
+
 /** Inline editable text field — uncontrolled contentEditable to keep caret stable. */
 function Editable({
   value, onChange, placeholder, className = "", multiline = false, as = "span",
