@@ -72,16 +72,18 @@
 
 /* Print styles */
 @media print {
-  body { background: white !important; }
+  html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
   .no-print { display: none !important; }
   .invoice-paper {
     box-shadow: none !important;
     margin: 0 !important;
+    padding: 0.25in !important;
     border-radius: 0 !important;
     max-width: 100% !important;
+    width: 100% !important;
   }
   .editable { outline: none !important; background: transparent !important; }
-  @page { margin: 0.5in; size: A4; }
+  @page { margin: 0; size: A4; }
 }
 
 /* When exporting via html2pdf */
