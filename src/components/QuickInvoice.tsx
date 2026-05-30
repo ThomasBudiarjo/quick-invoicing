@@ -438,7 +438,7 @@ export default function QuickInvoice() {
                         <NumberEditable value={it.qty} onChange={(n) => updateItem(it.id, { qty: n })} />
                       </td>
                       <td className="px-3 py-3 text-right">
-                        <NumberEditable value={it.rate} onChange={(n) => updateItem(it.id, { rate: n })} />
+                        <NumberEditable value={it.rate} onChange={(n) => updateItem(it.id, { rate: n })} currency={inv.currency} numberFormat={inv.numberFormat} />
                       </td>
                       <td className="px-3 py-3 text-right font-medium">{fmtMoney(lineAmount(it), inv.currency, inv.numberFormat)}</td>
                       <td className="no-print px-1 py-3 text-right">
